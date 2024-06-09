@@ -123,7 +123,20 @@
 			newScoreA = 0;
 		}
 
-		currentScores.push({ teamA: newScoreA, teamB: newScoreB });
+		currentScores.push({
+			teamA: newScoreA,
+			teamB: newScoreB,
+			tichuA,
+			tichuB,
+			grandA,
+			grandB,
+			lostTichuA,
+			lostTichuB,
+			lostGrandA,
+			lostGrandB,
+			doubleWinA,
+			doubleWinB,
+		});
 
 		totalA += newScoreA;
 		totalB += newScoreB;
@@ -267,7 +280,7 @@
 		</tbody>
 	</table>
 </div>
-<div class="w-full px-10 mb-8">
+<div class="w-full px-10 mb-6">
 	<button
 		class="btn btn-primary w-full"
 		on:click={addScore}

@@ -75,8 +75,42 @@
 				on:click={() => handleRowClick(index)}
 				on:keydown={(event) => handleRowKey(event, index)}
 			>
-				<div class="w-1/2 text-center">{score.teamA}</div>
-				<div class="w-1/2 text-center">{score.teamB}</div>
+				<div class="w-1/2 text-center">
+					{score.teamA}
+					{#if score.tichuA}<span class="badge badge-success"
+							>tichu</span
+						>{/if}
+					{#if score.grandA}<span class="badge badge-success"
+							>TICHU</span
+						>{/if}
+					{#if score.lostTichuA}<span class="badge badge-error"
+							>tichu</span
+						>{/if}
+					{#if score.lostGrandA}<span class="badge badge-error"
+							>TICHU</span
+						>{/if}
+					{#if score.doubleWinA}<span class="badge badge-warning"
+							>double win</span
+						>{/if}
+				</div>
+				<div class="w-1/2 text-center">
+					{score.teamB}
+					{#if score.tichuB}<span class="badge badge-success"
+							>tichu</span
+						>{/if}
+					{#if score.grandB}<span class="badge badge-success"
+							>TICHU</span
+						>{/if}
+					{#if score.lostTichuB}<span class="badge badge-error"
+							>tichu</span
+						>{/if}
+					{#if score.lostGrandB}<span class="badge badge-error"
+							>TICHU</span
+						>{/if}
+					{#if score.doubleWinB}<span class="badge badge-warning"
+							>double win</span
+						>{/if}
+				</div>
 				{#if activeRowIndex === index}
 					<button
 						class="absolute right-4 btn btn-error btn-sm"
@@ -91,11 +125,5 @@
 <style>
 	.score-row {
 		position: relative;
-	}
-	.score-row:hover .delete-action {
-		display: flex;
-	}
-	.delete-action {
-		display: none;
 	}
 </style>

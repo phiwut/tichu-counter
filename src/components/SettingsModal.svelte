@@ -33,7 +33,6 @@
 			showWinner: false,
 			winner: "",
 		}));
-		document.getElementById("winner-modal").close();
 	}
 
 	onMount(() => {
@@ -93,16 +92,19 @@
 	</div>
 </dialog>
 
-<dialog id="winner-modal" class="modal">
-	<div class="modal-box">
-		<h2 class="font-bold text-xl">Game Over</h2>
-		<p>
-			{winner === "Draft"
-				? "The game is a draft!"
-				: `The winner is ${winner}!`}
-		</p>
-		<div class="modal-action">
-			<button class="btn" on:click={resetWinner}>OK</button>
+{#if showWinner}
+	<dialog id="winner-modal" class="modal" open>
+		<div class="modal-box">
+			<h2 class="font-bold text-xl">Game Complete</h2>
+			<br />
+			<p>
+				{winner === "Draft"
+					? "The game is a draft!"
+					: `The winner is ${winner}!`}
+			</p>
+			<div class="modal-action">
+				<button class="btn" on:click={resetWinner}>OK</button>
+			</div>
 		</div>
-	</div>
-</dialog>
+	</dialog>
+{/if}

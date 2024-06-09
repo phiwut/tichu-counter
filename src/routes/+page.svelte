@@ -6,10 +6,12 @@
 	import SettingsModal from "../components/SettingsModal.svelte";
 </script>
 
-<div class="h-screen">
-	<Header />
-	<Scoreboard />
-	<div class="sticky bg-gray-800 bottom-0 w-full z-10">
+<div class="flex flex-col h-screen">
+	<div class="flex-grow">
+		<Header />
+		<Scoreboard />
+	</div>
+	<div class="bg-primary-content w-full z-10">
 		<PlayerInput />
 		<GameControls />
 	</div>
