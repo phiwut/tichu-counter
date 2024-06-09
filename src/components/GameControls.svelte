@@ -242,7 +242,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostTichuA}
-						disabled={doubleWinA}
+						disabled={tichuA || grandA || doubleWinA}
 					/>
 				</td>
 				<td class="text-center">
@@ -250,7 +250,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostTichuB}
-						disabled={doubleWinB}
+						disabled={tichuB || grandB || doubleWinB}
 					/>
 				</td>
 			</tr>
@@ -280,7 +280,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostGrandA}
-						disabled={doubleWinA}
+						disabled={tichuA || grandA || doubleWinA}
 					/>
 				</td>
 				<td class="text-center">
@@ -288,7 +288,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostGrandB}
-						disabled={doubleWinB}
+						disabled={tichuB || grandB || doubleWinB}
 					/>
 				</td>
 			</tr>
@@ -299,6 +299,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={doubleWinA}
+						disabled={tichuB || grandB || doubleWinB}
 						on:change={() => {
 							if (doubleWinA) {
 								scoreA = "";
@@ -320,6 +321,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={doubleWinB}
+						disabled={tichuA || grandA || doubleWinA}
 						on:change={() => {
 							if (doubleWinB) {
 								scoreA = "";
