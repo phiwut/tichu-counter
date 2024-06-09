@@ -166,13 +166,12 @@
 </script>
 
 <div class="w-full px-10 my-4">
-	<div class="w-full border-b border-gray-600 my-4"></div>
-	<div class="w-full px-10 flex justify-between mb-4">
+	<div class="w-full px-8 flex justify-between mb-4">
 		<input
 			type="number"
 			pattern="[0-9]*"
 			placeholder="Score"
-			class="input input-bordered input-primary w-1/2 text-center bg-gray-800 text-white mr-2"
+			class="input input-bordered input-primary w-1/2 text-center mr-4"
 			bind:value={scoreA}
 			on:input={validateAndSetScoreA}
 		/>
@@ -180,7 +179,7 @@
 			type="number"
 			pattern="[0-9]*"
 			placeholder="Score"
-			class="input input-bordered input-primary w-1/2 text-center bg-gray-800 text-white ml-2"
+			class="input input-bordered input-primary w-1/2 text-center ml-4"
 			bind:value={scoreB}
 			on:input={validateAndSetScoreB}
 		/>
@@ -195,7 +194,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td>Tichu:</td>
+				<td>Tichu</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -212,7 +211,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Lost Tichu:</td>
+				<td>Lost Tichu</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -229,7 +228,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Grand:</td>
+				<td>Grand Tichu</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -246,7 +245,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Lost Grand:</td>
+				<td>Lost Grand Tichu</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -263,7 +262,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>Double:</td>
+				<td>Double Win</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
