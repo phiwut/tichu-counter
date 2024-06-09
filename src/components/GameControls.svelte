@@ -26,7 +26,7 @@
 	}
 </script>
 
-<div class="w-full px-10 mb-8 flex justify-between">
+<div class="w-full px-5 mb-8 flex justify-between">
 	<button
 		class="btn btn-outline btn-natural w-1/2 mr-2"
 		on:click={openSettingsModal}>Settings</button

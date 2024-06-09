@@ -165,7 +165,7 @@
 	}
 </script>
 
-<div class="w-full px-10 my-4">
+<div class="w-full px-5 my-4">
 	<div class="w-full px-8 flex justify-between mb-4">
 		<input
 			type="number"
@@ -281,7 +281,7 @@
 		</tbody>
 	</table>
 </div>
-<div class="w-full px-10 mb-6">
+<div class="w-full px-5 mb-6">
 	<button
 		class="btn btn-primary w-full"
 		on:click={addScore}

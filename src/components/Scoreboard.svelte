@@ -65,11 +65,11 @@
 	$: updateTotals();
 </script>
 
-<div class="w-full px-10 my-4 overflow-y-auto flex-grow z-0">
+<div class="w-full px-5 my-4 overflow-y-auto flex-grow z-0">
 	<div class="flex flex-col space-y-2">
 		{#each scores as score, index}
 			<div
-				class="score-row flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-700 rounded-lg relative"
+				class="score-row flex items-center justify-between p-4 bg-primary rounded-lg relative"
 				role="button"
 				tabindex="0"
 				on:click={() => handleRowClick(index)}
