@@ -189,12 +189,12 @@
 </script>
 
 <div class="w-full px-5 my-4">
-	<div class="w-full px-8 flex justify-between mb-4">
+	<div class="w-full px-10 flex justify-between mb-4">
 		<input
 			type="number"
 			pattern="[0-9]*"
 			placeholder="Score"
-			class="input input-bordered input-primary w-1/2 text-center mr-4"
+			class="input input-bordered input-primary w-1/2 text-center mr-8"
 			bind:value={scoreA}
 			on:input={validateAndSetScoreA}
 		/>
@@ -202,7 +202,7 @@
 			type="number"
 			pattern="[0-9]*"
 			placeholder="Score"
-			class="input input-bordered input-primary w-1/2 text-center ml-4"
+			class="input input-bordered input-primary w-1/2 text-center ml-8"
 			bind:value={scoreB}
 			on:input={validateAndSetScoreB}
 		/>
@@ -344,7 +344,7 @@
 </div>
 <div class="w-full px-5 mb-6 flex items-center">
 	<button
-		class="btn btn-primary flex-grow"
+		class="btn btn-primary mr-2 flex-grow"
 		on:click={addScore}
 		disabled={isAddButtonDisabled}
 	>
@@ -367,7 +367,7 @@
 			></path></svg
 		>
 	</button>
-	<button class="btn btn-error mr-2" on:click={handleReset}>
+	<button class="btn btn-error" on:click={handleReset}>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
