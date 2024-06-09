@@ -223,6 +223,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={tichuA}
+						disabled={grandA || tichuB || grandB || doubleWinB}
 					/>
 				</td>
 				<td class="text-center">
@@ -230,6 +231,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={tichuB}
+						disabled={grandB || tichuA || grandA || doubleWinA}
 					/>
 				</td>
 			</tr>
@@ -240,6 +242,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostTichuA}
+						disabled={doubleWinA}
 					/>
 				</td>
 				<td class="text-center">
@@ -247,6 +250,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostTichuB}
+						disabled={doubleWinB}
 					/>
 				</td>
 			</tr>
@@ -257,6 +261,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={grandA}
+						disabled={tichuA || tichuB || grandB || doubleWinB}
 					/>
 				</td>
 				<td class="text-center">
@@ -264,6 +269,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={grandB}
+						disabled={tichuB || tichuA || grandA || doubleWinA}
 					/>
 				</td>
 			</tr>
@@ -274,6 +280,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostGrandA}
+						disabled={doubleWinA}
 					/>
 				</td>
 				<td class="text-center">
@@ -281,6 +288,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostGrandB}
+						disabled={doubleWinB}
 					/>
 				</td>
 			</tr>
@@ -291,6 +299,20 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={doubleWinA}
+						on:change={() => {
+							if (doubleWinA) {
+								scoreA = "";
+								scoreB = "";
+								tichuA = false;
+								tichuB = false;
+								grandA = false;
+								grandB = false;
+								lostTichuA = false;
+								lostTichuB = false;
+								lostGrandA = false;
+								lostGrandB = false;
+							}
+						}}
 					/>
 				</td>
 				<td class="text-center">
@@ -298,6 +320,20 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={doubleWinB}
+						on:change={() => {
+							if (doubleWinB) {
+								scoreA = "";
+								scoreB = "";
+								tichuA = false;
+								tichuB = false;
+								grandA = false;
+								grandB = false;
+								lostTichuA = false;
+								lostTichuB = false;
+								lostGrandA = false;
+								lostGrandB = false;
+							}
+						}}
 					/>
 				</td>
 			</tr>
