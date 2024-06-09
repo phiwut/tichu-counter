@@ -170,6 +170,7 @@
 	<div class="w-full px-10 flex justify-between mb-4">
 		<input
 			type="number"
+			pattern="[0-9]*"
 			placeholder="Score"
 			class="input input-bordered input-primary w-1/2 text-center bg-gray-800 text-white mr-2"
 			bind:value={scoreA}
@@ -177,6 +178,7 @@
 		/>
 		<input
 			type="number"
+			pattern="[0-9]*"
 			placeholder="Score"
 			class="input input-bordered input-primary w-1/2 text-center bg-gray-800 text-white ml-2"
 			bind:value={scoreB}
