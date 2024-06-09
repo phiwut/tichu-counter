@@ -5,7 +5,7 @@ export default {
   kit: {
     adapter: adapter({
       // Define fallback HTML page for dynamic routes
-      fallback: 'app.html'
+      fallback: 'index.html'
     }),
     prerender: {
       // Pre-render all pages
