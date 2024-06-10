@@ -10,7 +10,7 @@
 		<Header />
 		<Scoreboard />
 	</div>
-	<div class="bg-primary-content w-full z-10">
+	<div class="bg-primary-content w-full z-10 sticky bottom-0">
 		<GameControls />
 	</div>
 	<SettingsModal />
