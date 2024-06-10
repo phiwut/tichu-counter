@@ -88,15 +88,6 @@
 		let newScoreB = parseInt(isNaN(scoreB) ? 0 : scoreB);
 
 		// Calculate new scores based on Tichu and Grand Tichu status
-		if (tichuA) newScoreA += 100;
-		if (tichuB) newScoreB += 100;
-		if (grandA) newScoreA += 200;
-		if (grandB) newScoreB += 200;
-		if (lostTichuA) newScoreA -= 100;
-		if (lostTichuB) newScoreB -= 100;
-		if (lostGrandA) newScoreA -= 200;
-		if (lostGrandB) newScoreB -= 200;
-
 		if (doubleWinA) {
 			newScoreA = 200;
 			newScoreB = 0;
@@ -105,6 +96,15 @@
 			newScoreB = 200;
 			newScoreA = 0;
 		}
+
+		if (tichuA) newScoreA += 100;
+		if (tichuB) newScoreB += 100;
+		if (grandA) newScoreA += 200;
+		if (grandB) newScoreB += 200;
+		if (lostTichuA) newScoreA -= 100;
+		if (lostTichuB) newScoreB -= 100;
+		if (lostGrandA) newScoreA -= 200;
+		if (lostGrandB) newScoreB -= 200;
 
 		// Update the scores and totals in the store
 		scores.push({
