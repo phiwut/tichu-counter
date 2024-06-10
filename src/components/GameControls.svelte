@@ -202,7 +202,7 @@
 		/>
 	</div>
 	<!-- Score options table -->
-	<table class="table w-full text-white">
+	<table class="table w-full">
 		<thead>
 			<tr>
 				<th></th>

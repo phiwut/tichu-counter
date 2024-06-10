@@ -19,7 +19,7 @@
 	});
 </script>
 
-<div class="sticky top-0 bg-base-100 z-10 py-4">
+<div class="sticky top-0 bg-primary-content z-10 py-4">
 	<div class="flex justify-between w-full px-5">
 		<div class="text-xl text-center font-bold">{teamA}</div>
 		<div class="text-xl text-center font-bold">{teamB}</div>

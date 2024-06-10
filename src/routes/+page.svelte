@@ -5,12 +5,12 @@
 	import SettingsModal from "../components/SettingsModal.svelte";
 </script>
 
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-screen bg-base-100">
 	<div class="flex-grow">
 		<Header />
 		<Scoreboard />
 	</div>
-	<div class="bg-base-100 w-full z-10">
+	<div class="bg-primary-content w-full z-10">
 		<GameControls />
 	</div>
 	<SettingsModal />

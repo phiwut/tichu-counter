@@ -10,6 +10,8 @@
 	let showWinner = false;
 	let winner = "";
 
+	let activeTab = "game"; // Track the active tab
+
 	// Subscribe to settings store to update local state
 	settingsStore.subscribe((value) => {
 		teamA = value.teamA;
@@ -45,50 +47,139 @@
 			document.getElementById("winner-modal").showModal();
 		}
 	});
+
+	// Function to change theme
+	function changeTheme(theme) {
+		document.documentElement.setAttribute("data-theme", theme);
+	}
+
+	// Function to handle key events for tab navigation
+	function handleTabKey(event, tab) {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			activeTab = tab;
+		}
+	}
 </script>
 
 <dialog id="settings-modal" class="modal">
 	<div class="modal-box">
 		<h2 class="font-bold text-xl">Settings</h2>
-		<div class="form-control">
-			<label class="label" for="teamA">
-				<span class="label-text">Team A Name</span>
-			</label>
-			<input
-				type="text"
-				id="teamA"
-				class="input input-bordered"
-				bind:value={teamA}
-			/>
-		</div>
-		<div class="form-control mt-4">
-			<label class="label" for="teamB">
-				<span class="label-text">Team B Name</span>
-			</label>
-			<input
-				type="text"
-				id="teamB"
-				class="input input-bordered"
-				bind:value={teamB}
-			/>
-		</div>
-		<div class="form-control mt-4">
-			<label class="label" for="gameLimit">
-				<span class="label-text">Game Limit</span>
-			</label>
-			<select
-				id="gameLimit"
-				class="select select-bordered"
-				bind:value={gameLimit}
+		<div role="tablist" class="tabs tabs-bordered">
+			<a
+				role="tab"
+				tabindex="0"
+				class={`tab ${activeTab === "game" ? "tab-active" : ""}`}
+				on:click={() => (activeTab = "game")}
+				on:keydown={(event) => handleTabKey(event, "game")}
+				>Game Settings</a
 			>
-				<option value="500">500</option>
-				<option value="1000">1000</option>
-			</select>
+			<a
+				role="tab"
+				tabindex="0"
+				class={`tab ${activeTab === "app" ? "tab-active" : ""}`}
+				on:click={() => (activeTab = "app")}
+				on:keydown={(event) => handleTabKey(event, "app")}
+				>App Settings</a
+			>
+			<a
+				role="tab"
+				tabindex="0"
+				class={`tab ${activeTab === "info" ? "tab-active" : ""}`}
+				on:click={() => (activeTab = "info")}
+				on:keydown={(event) => handleTabKey(event, "info")}>Info</a
+			>
+		</div>
+		<div class="mt-4">
+			{#if activeTab === "game"}
+				<div class="form-control">
+					<label class="label" for="teamA">
+						<span class="label-text">Team A Name</span>
+					</label>
+					<input
+						type="text"
+						id="teamA"
+						class="input input-bordered"
+						bind:value={teamA}
+					/>
+				</div>
+				<div class="form-control mt-4">
+					<label class="label" for="teamB">
+						<span class="label-text">Team B Name</span>
+					</label>
+					<input
+						type="text"
+						id="teamB"
+						class="input input-bordered"
+						bind:value={teamB}
+					/>
+				</div>
+				<div class="form-control mt-4">
+					<label class="label" for="gameLimit">
+						<span class="label-text">Game Limit</span>
+					</label>
+					<input
+						type="number"
+						id="gameLimit"
+						class="input input-bordered"
+						bind:value={gameLimit}
+						min="1"
+					/>
+				</div>
+			{:else if activeTab === "app"}
+				<div class="form-control">
+					<label class="label" for="themeSelector">
+						<span class="label-text">App Theme</span>
+					</label>
+					<select
+						id="themeSelector"
+						class="select select-bordered"
+						on:change={(event) => changeTheme(event.target.value)}
+					>
+						<option value="light">Light</option>
+						<option value="dark">Dark</option>
+						<option value="cupcake">Cupcake</option>
+						<option value="bumblebee">Bumblebee</option>
+						<option value="emerald">Emerald</option>
+						<option value="corporate">Corporate</option>
+						<option value="synthwave">Synthwave</option>
+						<option value="retro">Retro</option>
+						<option value="cyberpunk">Cyberpunk</option>
+						<option value="valentine">Valentine</option>
+						<option value="halloween">Halloween</option>
+						<option value="garden">Garden</option>
+						<option value="forest">Forest</option>
+						<option value="aqua">Aqua</option>
+						<option value="lofi">Lo-fi</option>
+						<option value="pastel">Pastel</option>
+						<option value="fantasy">Fantasy</option>
+						<option value="wireframe">Wireframe</option>
+						<option value="black">Black</option>
+						<option value="luxury">Luxury</option>
+						<option value="dracula">Dracula</option>
+						<option value="cmyk">CMYK</option>
+						<option value="autumn">Autumn</option>
+						<option value="business">Business</option>
+						<option value="acid">Acid</option>
+						<option value="lemonade">Lemonade</option>
+						<option value="night">Night</option>
+						<option value="coffee">Coffee</option>
+						<option value="winter">Winter</option>
+					</select>
+				</div>
+			{:else if activeTab === "info"}
+				<p class="text-base">
+					This application is designed to help you manage your game
+					settings efficiently. For more information, visit our
+					website.
+				</p>
+			{/if}
 		</div>
 		<div class="modal-action">
 			<button
 				class="btn"
-				onclick="document.getElementById('settings-modal').close();"
+				on:click={() =>
+					document.getElementById("settings-modal").close()}
 				>Close</button
 			>
 			<button class="btn btn-primary" on:click={saveSettings}>Save</button

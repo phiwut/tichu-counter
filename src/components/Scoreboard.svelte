@@ -94,7 +94,7 @@
 							>TICHU</span
 						>{/if}
 					{#if score.doubleWinA}<span class="badge badge-warning"
-							>double win</span
+							>double-win</span
 						>{/if}
 				</div>
 				<div class="w-1/2 text-center">
