@@ -4,7 +4,7 @@ function createSettingsStore() {
   let initialSettings = {
     teamA: 'TEAM A',
     teamB: 'TEAM B',
-    gameLimit: 500,
+    gameLimit: 1000,
     showWinner: false,
     winner: ''
   };
