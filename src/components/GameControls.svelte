@@ -19,7 +19,7 @@
 
 	let teamA = "TEAM A";
 	let teamB = "TEAM B";
-	let gameLimit = 500;
+	let gameLimit = 1000;
 
 	let showResetModal = false;
 
