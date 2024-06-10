@@ -7,12 +7,14 @@
 	let totalB = 0;
 	let activeRowIndex = null;
 
+	// Subscribe to score store to update local state
 	scoreStore.subscribe((value) => {
 		scores = value.scores;
 		totalA = value.totalA;
 		totalB = value.totalB;
 	});
 
+	// Function to update total scores
 	function updateTotals() {
 		let sumA = 0;
 		let sumB = 0;
@@ -27,6 +29,7 @@
 		});
 	}
 
+	// Function to delete a score entry
 	function deleteScore(index) {
 		scoreStore.update((store) => {
 			store.scores.splice(index, 1);
@@ -35,26 +38,26 @@
 		updateTotals();
 	}
 
+	// Function to handle row click
 	function handleRowClick(index) {
-		if (activeRowIndex === index) {
-			activeRowIndex = null;
-		} else {
-			activeRowIndex = index;
-		}
+		activeRowIndex = activeRowIndex === index ? null : index;
 	}
 
+	// Function to handle row key events
 	function handleRowKey(event, index) {
 		if (event.key === "Enter" || event.key === " ") {
 			handleRowClick(index);
 		}
 	}
 
+	// Function to handle click outside the score rows
 	function handleClickOutside(event) {
 		if (!event.target.closest(".score-row")) {
 			activeRowIndex = null;
 		}
 	}
 
+	// Register and unregister event listener for click outside
 	onMount(() => {
 		document.addEventListener("click", handleClickOutside);
 		return () => {
@@ -62,6 +65,7 @@
 		};
 	});
 
+	// Reactive statement to update totals
 	$: updateTotals();
 </script>
 

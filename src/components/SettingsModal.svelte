@@ -1,6 +1,7 @@
 <script>
 	import { settingsStore } from "../stores/settingsStore";
 	import { onMount } from "svelte";
+	import Modal from "./Modal.svelte";
 
 	let teamA = "TEAM A";
 	let teamB = "TEAM B";
@@ -9,6 +10,7 @@
 	let showWinner = false;
 	let winner = "";
 
+	// Subscribe to settings store to update local state
 	settingsStore.subscribe((value) => {
 		teamA = value.teamA;
 		teamB = value.teamB;
@@ -17,6 +19,7 @@
 		winner = value.winner;
 	});
 
+	// Function to save settings
 	function saveSettings() {
 		settingsStore.update((store) => ({
 			...store,
@@ -27,6 +30,7 @@
 		document.getElementById("settings-modal").close();
 	}
 
+	// Function to reset winner status
 	function resetWinner() {
 		settingsStore.update((store) => ({
 			...store,
@@ -35,6 +39,7 @@
 		}));
 	}
 
+	// Show winner modal on mount if needed
 	onMount(() => {
 		if (showWinner) {
 			document.getElementById("winner-modal").showModal();
@@ -92,19 +97,13 @@
 	</div>
 </dialog>
 
-{#if showWinner}
-	<dialog id="winner-modal" class="modal" open>
-		<div class="modal-box">
-			<h2 class="font-bold text-xl">Game Complete</h2>
-			<br />
-			<p>
-				{winner === "Draft"
-					? "The game is a draft!"
-					: `The winner is ${winner}!`}
-			</p>
-			<div class="modal-action">
-				<button class="btn" on:click={resetWinner}>OK</button>
-			</div>
-		</div>
-	</dialog>
-{/if}
+<Modal show={showWinner} title="Game Complete">
+	<p slot="content">
+		{winner === "Draft"
+			? "The game is a draft!"
+			: `The winner is ${winner}!`}
+	</p>
+	<div slot="actions">
+		<button class="btn" on:click={resetWinner}>OK</button>
+	</div>
+</Modal>

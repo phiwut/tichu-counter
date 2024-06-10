@@ -2,7 +2,10 @@
 	import { scoreStore } from "../stores/scoreStore";
 	import { settingsStore } from "../stores/settingsStore";
 	import { get } from "svelte/store";
+	import InputField from "./InputField.svelte";
+	import Modal from "./Modal.svelte";
 
+	// Local state variables
 	let scoreA = "";
 	let scoreB = "";
 	let tichuA = false;
@@ -15,67 +18,47 @@
 	let lostGrandB = false;
 	let doubleWinA = false;
 	let doubleWinB = false;
-	let isAddButtonDisabled = true;
+	let showResetModal = false;
 
+	// Settings from the store
 	let teamA = "TEAM A";
 	let teamB = "TEAM B";
 	let gameLimit = 1000;
 
-	let showResetModal = false;
-
+	// Subscribe to settings store to update local state
 	settingsStore.subscribe((value) => {
 		teamA = value.teamA;
 		teamB = value.teamB;
 		gameLimit = value.gameLimit;
 	});
 
-	$: {
-		isAddButtonDisabled = !(
-			(scoreA !== "" &&
-				scoreB !== "" &&
-				!isNaN(scoreA) &&
-				!isNaN(scoreB) &&
-				scoreA % 5 === 0 &&
-				scoreB % 5 === 0) ||
-			doubleWinA === true ||
-			doubleWinB === true
-		);
-	}
+	// Reactive statement to enable/disable the add score button
+	$: isAddButtonDisabled = !(
+		(scoreA !== "" &&
+			scoreB !== "" &&
+			!isNaN(scoreA) &&
+			!isNaN(scoreB) &&
+			scoreA % 5 === 0 &&
+			scoreB % 5 === 0) ||
+		doubleWinA ||
+		doubleWinB
+	);
 
-	function validateAndSetScoreA(event) {
+	// Utility functions
+	function validateAndSetScore(event, setScore, setOppositeScore) {
 		let value = event.target.value;
 		if (value === "" || value === "-") {
-			scoreA = value;
-			scoreB = "";
+			setScore(value);
+			setOppositeScore("");
 		} else {
-			let intScoreA = parseInt(value);
-			if (!isNaN(intScoreA) && intScoreA % 5 === 0) {
-				if (intScoreA < -25) intScoreA = -25;
-				if (intScoreA > 125) intScoreA = 125;
-				scoreA = intScoreA;
-				scoreB = 100 - intScoreA;
+			let intScore = parseInt(value);
+			if (!isNaN(intScore) && intScore % 5 === 0) {
+				intScore = Math.max(-25, Math.min(125, intScore));
+				setScore(intScore);
+				setOppositeScore(100 - intScore);
 			} else {
-				scoreA = value;
-				scoreB = "";
-			}
-		}
-	}
-
-	function validateAndSetScoreB(event) {
-		let value = event.target.value;
-		if (value === "" || value === "-") {
-			scoreB = value;
-			scoreA = "";
-		} else {
-			let intScoreB = parseInt(value);
-			if (!isNaN(intScoreB) && intScoreB % 5 === 0) {
-				if (intScoreB < -25) intScoreB = -25;
-				if (intScoreB > 125) intScoreB = 125;
-				scoreB = intScoreB;
-				scoreA = 100 - intScoreB;
-			} else {
-				scoreB = value;
-				scoreA = "";
+				setScore(value);
+				setOppositeScore("");
 			}
 		}
 	}
@@ -100,13 +83,11 @@
 	}
 
 	function addScore() {
-		let currentScores = get(scoreStore).scores;
-		let totalA = get(scoreStore).totalA;
-		let totalB = get(scoreStore).totalB;
-
+		let { scores, totalA, totalB } = get(scoreStore);
 		let newScoreA = parseInt(isNaN(scoreA) ? 0 : scoreA);
 		let newScoreB = parseInt(isNaN(scoreB) ? 0 : scoreB);
 
+		// Calculate new scores based on Tichu and Grand Tichu status
 		if (tichuA) newScoreA += 100;
 		if (tichuB) newScoreB += 100;
 		if (grandA) newScoreA += 200;
@@ -125,7 +106,8 @@
 			newScoreA = 0;
 		}
 
-		currentScores.push({
+		// Update the scores and totals in the store
+		scores.push({
 			teamA: newScoreA,
 			teamB: newScoreB,
 			tichuA,
@@ -145,11 +127,19 @@
 
 		scoreStore.update((store) => ({
 			...store,
-			scores: currentScores,
-			totalA: totalA,
-			totalB: totalB,
+			scores,
+			totalA,
+			totalB,
 		}));
 
+		// Reset local state
+		resetInputs();
+
+		// Check for a winner
+		checkWinner(totalA, totalB);
+	}
+
+	function resetInputs() {
 		scoreA = "";
 		scoreB = "";
 		tichuA = false;
@@ -162,8 +152,6 @@
 		lostGrandB = false;
 		doubleWinA = false;
 		doubleWinB = false;
-
-		checkWinner(totalA, totalB);
 	}
 
 	function handleReset() {
@@ -188,25 +176,32 @@
 	}
 </script>
 
+<!-- HTML content -->
 <div class="w-full px-5 my-4">
-	<div class="w-full px-10 flex justify-between mb-4">
-		<input
-			type="number"
-			pattern="[0-9]*"
+	<!-- Input fields for scores -->
+	<div class="w-full px-6 space-x-6 flex justify-between mb-4">
+		<InputField
+			value={scoreA}
 			placeholder="Score"
-			class="input input-bordered input-primary w-1/2 text-center mr-8"
-			bind:value={scoreA}
-			on:input={validateAndSetScoreA}
+			onInput={(event) =>
+				validateAndSetScore(
+					event,
+					(val) => (scoreA = val),
+					(val) => (scoreB = val),
+				)}
 		/>
-		<input
-			type="number"
-			pattern="[0-9]*"
+		<InputField
+			value={scoreB}
 			placeholder="Score"
-			class="input input-bordered input-primary w-1/2 text-center ml-8"
-			bind:value={scoreB}
-			on:input={validateAndSetScoreB}
+			onInput={(event) =>
+				validateAndSetScore(
+					event,
+					(val) => (scoreB = val),
+					(val) => (scoreA = val),
+				)}
 		/>
 	</div>
+	<!-- Score options table -->
 	<table class="table w-full text-white">
 		<thead>
 			<tr>
@@ -216,6 +211,7 @@
 			</tr>
 		</thead>
 		<tbody>
+			<!-- Tichu option -->
 			<tr>
 				<td>Tichu</td>
 				<td class="text-center">
@@ -223,7 +219,12 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={tichuA}
-						disabled={grandA || tichuB || grandB || doubleWinB}
+						disabled={lostTichuA ||
+							lostGrandA ||
+							grandA ||
+							tichuB ||
+							grandB ||
+							doubleWinB}
 					/>
 				</td>
 				<td class="text-center">
@@ -231,10 +232,16 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={tichuB}
-						disabled={grandB || tichuA || grandA || doubleWinA}
+						disabled={lostTichuB ||
+							lostGrandB ||
+							grandB ||
+							tichuA ||
+							grandA ||
+							doubleWinA}
 					/>
 				</td>
 			</tr>
+			<!-- Lost Tichu option -->
 			<tr>
 				<td>Lost Tichu</td>
 				<td class="text-center">
@@ -242,7 +249,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostTichuA}
-						disabled={tichuA || grandA || doubleWinA}
+						disabled={lostGrandA || tichuA || grandA || doubleWinA}
 					/>
 				</td>
 				<td class="text-center">
@@ -250,10 +257,11 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostTichuB}
-						disabled={tichuB || grandB || doubleWinB}
+						disabled={lostGrandB || tichuB || grandB || doubleWinB}
 					/>
 				</td>
 			</tr>
+			<!-- Grand Tichu option -->
 			<tr>
 				<td>Grand Tichu</td>
 				<td class="text-center">
@@ -261,7 +269,12 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={grandA}
-						disabled={tichuA || tichuB || grandB || doubleWinB}
+						disabled={lostTichuA ||
+							lostGrandA ||
+							tichuA ||
+							tichuB ||
+							grandB ||
+							doubleWinB}
 					/>
 				</td>
 				<td class="text-center">
@@ -269,10 +282,16 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={grandB}
-						disabled={tichuB || tichuA || grandA || doubleWinA}
+						disabled={lostTichuB ||
+							lostGrandB ||
+							tichuB ||
+							tichuA ||
+							grandA ||
+							doubleWinA}
 					/>
 				</td>
 			</tr>
+			<!-- Lost Grand Tichu option -->
 			<tr>
 				<td>Lost Grand Tichu</td>
 				<td class="text-center">
@@ -280,7 +299,7 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostGrandA}
-						disabled={tichuA || grandA || doubleWinA}
+						disabled={lostTichuA || tichuA || grandA || doubleWinA}
 					/>
 				</td>
 				<td class="text-center">
@@ -288,10 +307,11 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={lostGrandB}
-						disabled={tichuB || grandB || doubleWinB}
+						disabled={lostTichuB || tichuB || grandB || doubleWinB}
 					/>
 				</td>
 			</tr>
+			<!-- Double Win option -->
 			<tr>
 				<td>Double Win</td>
 				<td class="text-center">
@@ -299,21 +319,11 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={doubleWinA}
-						disabled={tichuB || grandB || doubleWinB}
-						on:change={() => {
-							if (doubleWinA) {
-								scoreA = "";
-								scoreB = "";
-								tichuA = false;
-								tichuB = false;
-								grandA = false;
-								grandB = false;
-								lostTichuA = false;
-								lostTichuB = false;
-								lostGrandA = false;
-								lostGrandB = false;
-							}
-						}}
+						disabled={lostTichuA ||
+							lostGrandA ||
+							tichuB ||
+							grandB ||
+							doubleWinB}
 					/>
 				</td>
 				<td class="text-center">
@@ -321,82 +331,47 @@
 						type="checkbox"
 						class="checkbox checkbox-primary"
 						bind:checked={doubleWinB}
-						disabled={tichuA || grandA || doubleWinA}
-						on:change={() => {
-							if (doubleWinB) {
-								scoreA = "";
-								scoreB = "";
-								tichuA = false;
-								tichuB = false;
-								grandA = false;
-								grandB = false;
-								lostTichuA = false;
-								lostTichuB = false;
-								lostGrandA = false;
-								lostGrandB = false;
-							}
-						}}
+						disabled={lostTichuB ||
+							lostGrandB ||
+							tichuA ||
+							grandA ||
+							doubleWinA}
 					/>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 </div>
+
+<!-- Action buttons -->
 <div class="w-full px-5 mb-6 flex items-center">
 	<button
-		class="btn btn-primary mr-2 flex-grow"
+		class="btn btn-primary mr-2 flex-grow {isAddButtonDisabled
+			? 'btn-outline'
+			: ''}"
 		on:click={addScore}
 		disabled={isAddButtonDisabled}
 	>
 		Add Score
 	</button>
-	<button class="btn btn-natural mr-2" on:click={openSettingsModal}>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="feather feather-settings"
-			><circle cx="12" cy="12" r="3"></circle><path
-				d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-			></path></svg
-		>
+
+	<button
+		class="btn btn-info mr-2"
+		on:click={openSettingsModal}
+		aria-label="Settings"
+	>
+		<img src="/settings.svg" alt="Settings" width="24" height="24" />
 	</button>
-	<button class="btn btn-error" on:click={handleReset}>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="feather feather-trash"
-			><polyline points="3 6 5 6 21 6"></polyline><path
-				d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-			></path></svg
-		>
+	<button class="btn btn-error" on:click={handleReset} aria-label="Reset">
+		<img src="/trash.svg" alt="Reset" width="24" height="24" />
 	</button>
 </div>
 
-{#if showResetModal}
-	<dialog class="modal" open>
-		<div class="modal-box">
-			<h2 class="font-bold text-xl">Confirm Reset</h2>
-			<p>Are you sure you want to reset the scores?</p>
-			<div class="modal-action">
-				<button class="btn" on:click={closeResetModal}>No</button>
-				<button class="btn btn-error" on:click={confirmReset}
-					>Yes</button
-				>
-			</div>
-		</div>
-	</dialog>
-{/if}
+<!-- Reset confirmation modal -->
+<Modal show={showResetModal} title="Confirm Reset">
+	<p slot="content">Are you sure you want to reset the scores?</p>
+	<div slot="actions">
+		<button class="btn" on:click={closeResetModal}>No</button>
+		<button class="btn btn-error" on:click={confirmReset}>Yes</button>
+	</div>
+</Modal>
