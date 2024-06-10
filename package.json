@@ -13,7 +13,9 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"svelte": "^4.2.7",
 		"svelte-preprocess": "^5.1.4",
-		"vite": "^5.2.13"
+		"vite": "^5.2.13",
+		"vite-plugin-pwa": "^0.20.0",
+		"workbox-cli": "^7.1.0"
 	},
 	"type": "module",
 	"dependencies": {

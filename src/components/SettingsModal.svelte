@@ -71,16 +71,14 @@
 				tabindex="0"
 				class={`tab ${activeTab === "game" ? "tab-active" : ""}`}
 				on:click={() => (activeTab = "game")}
-				on:keydown={(event) => handleTabKey(event, "game")}
-				>Game Settings</a
+				on:keydown={(event) => handleTabKey(event, "game")}>Game</a
 			>
 			<a
 				role="tab"
 				tabindex="0"
 				class={`tab ${activeTab === "app" ? "tab-active" : ""}`}
 				on:click={() => (activeTab = "app")}
-				on:keydown={(event) => handleTabKey(event, "app")}
-				>App Settings</a
+				on:keydown={(event) => handleTabKey(event, "app")}>App</a
 			>
 			<a
 				role="tab"
