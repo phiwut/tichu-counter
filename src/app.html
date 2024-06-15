@@ -4,16 +4,16 @@
     %sveltekit.head%
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#000000" />
     <link rel="apple-touch-icon" href="/icon-192x192.png" />
     <title>Tichu Counter (tichu.xyz)</title>
     <meta name="description" content="Tichu Counter is an intuitive web application to keep track of Tichu game scores easily and efficiently.">
   </head>
   <body>
-  <div style="display: contents">
-    %sveltekit.body%
-  </div>
+    <div style="display: contents">
+      %sveltekit.body%
+    </div>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
