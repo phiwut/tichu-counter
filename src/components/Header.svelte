@@ -19,23 +19,17 @@
 	});
 </script>
 
-<div class="sticky top-0 bg-primary-content z-10 py-4">
-	<div class="flex justify-between w-full px-5">
-		<div class="text-xl text-center font-bold">{teamA}</div>
-		<div class="text-xl text-center font-bold">{teamB}</div>
-	</div>
-	<div class="flex justify-between w-full px-5 my-4">
-		<input
-			type="text"
-			value={totalA}
-			class="border border-primary rounded-full w-1/2 flex items-center justify-center text-2xl text-center bg-gray-800 text-white mr-2"
-			readonly
-		/>
-		<input
-			type="text"
-			value={totalB}
-			class="border border-primary rounded-full w-1/2 flex items-center justify-center text-2xl text-center bg-gray-800 text-white ml-2"
-			readonly
-		/>
+<div class="sticky top-0 bg-primary-content z-10 p-5">
+	<div class="stats shadow w-full">
+		<div class="stat place-items-center">
+			<div class="stat-title">{teamA}</div>
+			<div class="stat-value text-primary">{totalA}</div>
+			<div class="stat-desc">Points</div>
+		</div>
+		<div class="stat place-items-center">
+			<div class="stat-title">{teamB}</div>
+			<div class="stat-value text-primary">{totalB}</div>
+			<div class="stat-desc">Points</div>
+		</div>
 	</div>
 </div>
