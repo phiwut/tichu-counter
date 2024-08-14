@@ -3,6 +3,9 @@
 	import { onMount } from "svelte";
 	import Modal from "./Modal.svelte";
 
+	export let show = false;
+	export let onClose;
+
 	let teamA = "TEAM A";
 	let teamB = "TEAM B";
 	let gameLimit = 1000; // Default value
@@ -29,7 +32,7 @@
 			teamB,
 			gameLimit,
 		}));
-		document.getElementById("settings-modal").close();
+		onClose();
 	}
 
 	// Function to reset winner status
@@ -40,13 +43,6 @@
 			winner: "",
 		}));
 	}
-
-	// Show winner modal on mount if needed
-	onMount(() => {
-		if (showWinner) {
-			document.getElementById("winner-modal").showModal();
-		}
-	});
 
 	// Function to change theme
 	function changeTheme(theme) {
@@ -62,9 +58,8 @@
 	}
 </script>
 
-<dialog id="settings-modal" class="modal">
-	<div class="modal-box">
-		<h2 class="font-bold text-xl">Settings</h2>
+<Modal {show} title="Settings" on:close={onClose}>
+	<div slot="content">
 		<div role="tablist" class="tabs tabs-bordered">
 			<a
 				role="tab"
@@ -161,18 +156,12 @@
 				</p>
 			{/if}
 		</div>
-		<div class="modal-action">
-			<button
-				class="btn"
-				on:click={() =>
-					document.getElementById("settings-modal").close()}
-				>Close</button
-			>
-			<button class="btn btn-primary" on:click={saveSettings}>Save</button
-			>
-		</div>
 	</div>
-</dialog>
+	<div slot="actions">
+		<button class="btn" on:click={onClose}>Close</button>
+		<button class="btn btn-primary" on:click={saveSettings}>Save</button>
+	</div>
+</Modal>
 
 <Modal show={showWinner} title="Game Complete">
 	<p slot="content">

@@ -4,14 +4,9 @@
 	import Header from "../components/Header.svelte";
 	import Scoreboard from "../components/Scoreboard.svelte";
 	import GameControls from "../components/GameControls.svelte";
+	import SettingsModal from "../components/SettingsModal.svelte";
 
-	let SettingsModal;
 	let showSettings = false;
-
-	onMount(async () => {
-		const module = await import('../components/SettingsModal.svelte');
-		SettingsModal = module.default;
-	});
 
 	function toggleSettings() {
 		showSettings = !showSettings;
@@ -30,11 +25,7 @@
 	<div class="bg-primary-content w-full z-10 sticky bottom-0" transition:slide={{duration: 300}}>
 		<GameControls on:openSettings={toggleSettings} />
 	</div>
-	{#if SettingsModal && showSettings}
-		<div transition:fade>
-			<svelte:component this={SettingsModal} on:close={toggleSettings} />
-		</div>
-	{/if}
+	<SettingsModal show={showSettings} onClose={toggleSettings} />
 </div>
 
 <style>

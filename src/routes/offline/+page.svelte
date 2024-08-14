@@ -1,30 +1,45 @@
 <script>
   import { onMount } from 'svelte';
 
-  let isOnline = true;
+  let online = true;
 
   onMount(() => {
-    isOnline = navigator.onLine;
-    window.addEventListener('online', () => isOnline = true);
-    window.addEventListener('offline', () => isOnline = false);
+    online = navigator.onLine;
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   });
+
+  function handleOnline() {
+    online = true;
+  }
+
+  function handleOffline() {
+    online = false;
+  }
+
+  function reloadPage() {
+    window.location.reload();
+  }
 </script>
 
-<svelte:head>
-  <title>Offline - Tichu.xyz</title>
-</svelte:head>
-
-<div class="flex flex-col items-center justify-center h-screen bg-gray-100">
-  <h1 class="text-4xl font-bold mb-4">You're Offline</h1>
-  <p class="text-xl mb-8">Please check your internet connection and try again.</p>
-  {#if isOnline}
-    <a href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      Reload
-    </a>
-  {:else}
-    <button class="bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-not-allowed" disabled>
-      Waiting for connection...
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+  <h1 class="text-4xl font-bold mb-4">Tichu Counter</h1>
+  {#if online}
+    <p class="text-xl mb-4">You are back online!</p>
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      on:click={reloadPage}
+    >
+      Reload Page
     </button>
+  {:else}
+    <p class="text-xl mb-4">You are currently offline.</p>
+    <p class="text-lg mb-4">Please check your internet connection and try again.</p>
   {/if}
 </div>
 

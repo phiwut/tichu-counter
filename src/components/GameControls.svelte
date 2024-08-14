@@ -2,8 +2,11 @@
 	import { scoreStore } from "../stores/scoreStore";
 	import { settingsStore } from "../stores/settingsStore";
 	import { get } from "svelte/store";
+	import { createEventDispatcher } from 'svelte';
 	import InputField from "./InputField.svelte";
 	import Modal from "./Modal.svelte";
+
+	const dispatch = createEventDispatcher();
 
 	// Local state variables
 	let scoreA = "";
@@ -172,7 +175,7 @@
 	}
 
 	function openSettingsModal() {
-		document.getElementById("settings-modal").showModal();
+		dispatch('openSettings');
 	}
 </script>
 

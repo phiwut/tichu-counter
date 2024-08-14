@@ -7,12 +7,22 @@
   let updateServiceWorker;
 
   onMount(() => {
+    console.log('ReloadPrompt: Registering service worker');
     updateServiceWorker = registerSW({
       onNeedRefresh() {
+        console.log('ReloadPrompt: New content available, refresh needed');
         needRefresh = true;
       },
       onOfflineReady() {
+        console.log('ReloadPrompt: App ready for offline use');
         offlineReady = true;
+      },
+      onRegistered(r) {
+        console.log('ReloadPrompt: Service worker registered');
+        r && r.update();
+      },
+      onRegisterError(error) {
+        console.error('ReloadPrompt: Service worker registration error', error);
       },
     });
   });
@@ -23,6 +33,7 @@
   }
 
   function updateSW() {
+    console.log('ReloadPrompt: Updating service worker');
     needRefresh = false;
     updateServiceWorker(true);
   }
