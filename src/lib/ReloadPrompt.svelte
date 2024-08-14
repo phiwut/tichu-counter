@@ -1,3 +1,16 @@
+<!--
+  @component
+  This component handles the Progressive Web App (PWA) update functionality.
+  It displays a prompt to the user when a new version of the app is available
+  or when the app is ready for offline use.
+
+  Features:
+  - Registers and manages the service worker for PWA functionality
+  - Displays a toast notification for app updates and offline readiness
+  - Provides options to reload the app with new content or dismiss the notification
+  - Handles offline readiness notification
+-->
+
 <script>
   import { onMount } from 'svelte';
   import { registerSW } from 'virtual:pwa-register';
@@ -27,11 +40,17 @@
     });
   });
 
+  /**
+   * Closes the update prompt
+   */
   function close() {
     offlineReady = false;
     needRefresh = false;
   }
 
+  /**
+   * Triggers the service worker update and reloads the page
+   */
   function updateSW() {
     console.log('ReloadPrompt: Updating service worker');
     needRefresh = false;

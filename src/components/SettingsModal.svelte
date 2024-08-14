@@ -1,3 +1,22 @@
+<!--
+  @component
+  This component represents the settings modal for the Tichu scoring application.
+  It allows users to modify game settings, change the app theme, and view information about the app.
+  The component also handles displaying the winner when a game is complete.
+
+  Props:
+  - show: A boolean to control the visibility of the settings modal
+  - onClose: A function to be called when the modal is closed
+
+  Features:
+  - Tabbed interface for different setting categories (Game, App, Info)
+  - Game settings: Team names and game limit
+  - App settings: Theme selection
+  - Info tab with general information about the app
+  - Displays game winner in a separate modal when a game is complete
+  - Keyboard accessible for better usability
+-->
+
 <script>
 	import { settingsStore } from "../stores/settingsStore";
 	import { onMount } from "svelte";
@@ -24,7 +43,9 @@
 		winner = value.winner;
 	});
 
-	// Function to save settings
+	/**
+	 * Saves the current settings to the store and closes the modal
+	 */
 	function saveSettings() {
 		settingsStore.update((store) => ({
 			...store,
@@ -35,7 +56,9 @@
 		onClose();
 	}
 
-	// Function to reset winner status
+	/**
+	 * Resets the winner status in the store
+	 */
 	function resetWinner() {
 		settingsStore.update((store) => ({
 			...store,
@@ -44,12 +67,19 @@
 		}));
 	}
 
-	// Function to change theme
+	/**
+	 * Changes the app theme
+	 * @param {string} theme - The name of the theme to apply
+	 */
 	function changeTheme(theme) {
 		document.documentElement.setAttribute("data-theme", theme);
 	}
 
-	// Function to handle key events for tab navigation
+	/**
+	 * Handles keyboard events for tab navigation
+	 * @param {KeyboardEvent} event - The keyboard event
+	 * @param {string} tab - The name of the tab to activate
+	 */
 	function handleTabKey(event, tab) {
 		if (event.key === "Enter" || event.key === " ") {
 			event.preventDefault();

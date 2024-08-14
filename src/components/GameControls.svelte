@@ -1,3 +1,19 @@
+<!--
+  @component
+  This component handles the game controls for a Tichu scoring application.
+  It allows users to input scores, select various game options (Tichu, Grand Tichu, etc.),
+  and manages the overall game state. The component interacts with the scoreStore and
+  settingsStore to maintain and update the game's state.
+
+  Features:
+  - Score input for both teams
+  - Tichu and Grand Tichu options (including lost Tichu/Grand Tichu)
+  - Double Win option
+  - Score validation and automatic opposite score calculation
+  - Game reset functionality with confirmation modal
+  - Settings access
+-->
+
 <script>
 	import { scoreStore } from "../stores/scoreStore";
 	import { settingsStore } from "../stores/settingsStore";
@@ -48,6 +64,13 @@
 	);
 
 	// Utility functions
+
+	/**
+	 * Validates and sets the score for a team, updating the opposite team's score accordingly
+	 * @param {Event} event - The input event
+	 * @param {Function} setScore - Function to set the score for the current team
+	 * @param {Function} setOppositeScore - Function to set the score for the opposite team
+	 */
 	function validateAndSetScore(event, setScore, setOppositeScore) {
 		let value = event.target.value;
 		if (value === "" || value === "-") {
@@ -66,6 +89,11 @@
 		}
 	}
 
+	/**
+	 * Checks if there's a winner based on the current scores and game limit
+	 * @param {number} totalA - Total score for Team A
+	 * @param {number} totalB - Total score for Team B
+	 */
 	function checkWinner(totalA, totalB) {
 		let winner = "";
 		if (totalA >= gameLimit && totalB >= gameLimit) {
@@ -85,6 +113,9 @@
 		}
 	}
 
+	/**
+	 * Adds the current round's score to the scoreStore
+	 */
 	function addScore() {
 		let { scores, totalA, totalB } = get(scoreStore);
 		let newScoreA = parseInt(isNaN(scoreA) ? 0 : scoreA);
@@ -142,6 +173,9 @@
 		checkWinner(totalA, totalB);
 	}
 
+	/**
+	 * Resets all input fields and checkboxes to their default states
+	 */
 	function resetInputs() {
 		scoreA = "";
 		scoreB = "";
@@ -157,10 +191,16 @@
 		doubleWinB = false;
 	}
 
+	/**
+	 * Displays the reset confirmation modal
+	 */
 	function handleReset() {
 		showResetModal = true;
 	}
 
+	/**
+	 * Resets the game scores and closes the reset confirmation modal
+	 */
 	function confirmReset() {
 		scoreStore.update(() => ({
 			totalA: 0,
@@ -170,10 +210,16 @@
 		showResetModal = false;
 	}
 
+	/**
+	 * Closes the reset confirmation modal without resetting the game
+	 */
 	function closeResetModal() {
 		showResetModal = false;
 	}
 
+	/**
+	 * Dispatches an event to open the settings modal
+	 */
 	function openSettingsModal() {
 		dispatch('openSettings');
 	}

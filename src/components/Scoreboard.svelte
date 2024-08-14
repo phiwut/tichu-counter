@@ -1,3 +1,18 @@
+<!--
+  @component
+  This component represents the scoreboard for the Tichu scoring application.
+  It displays a list of all scores for both teams, including special events like Tichu and Grand Tichu.
+  The component allows for score deletion and provides an interactive interface for viewing score details.
+
+  Features:
+  - Displays all scores in a scrollable list
+  - Shows special events (Tichu, Grand Tichu, Double Win) with badges
+  - Allows deletion of individual score entries
+  - Interactive row expansion for more details
+  - Automatically updates total scores when entries are added or deleted
+  - Keyboard accessible for better usability
+-->
+
 <script>
 	import { scoreStore } from "../stores/scoreStore";
 	import { onMount } from "svelte";
@@ -14,7 +29,9 @@
 		totalB = value.totalB;
 	});
 
-	// Function to update total scores
+	/**
+	 * Updates the total scores for both teams
+	 */
 	function updateTotals() {
 		let sumA = 0;
 		let sumB = 0;
@@ -29,7 +46,10 @@
 		});
 	}
 
-	// Function to delete a score entry
+	/**
+	 * Deletes a score entry at the specified index
+	 * @param {number} index - The index of the score to delete
+	 */
 	function deleteScore(index) {
 		scoreStore.update((store) => {
 			store.scores.splice(index, 1);
@@ -38,19 +58,29 @@
 		updateTotals();
 	}
 
-	// Function to handle row click
+	/**
+	 * Handles the click event on a score row
+	 * @param {number} index - The index of the clicked row
+	 */
 	function handleRowClick(index) {
 		activeRowIndex = activeRowIndex === index ? null : index;
 	}
 
-	// Function to handle row key events
+	/**
+	 * Handles keyboard events for accessibility
+	 * @param {KeyboardEvent} event - The keyboard event
+	 * @param {number} index - The index of the row
+	 */
 	function handleRowKey(event, index) {
 		if (event.key === "Enter" || event.key === " ") {
 			handleRowClick(index);
 		}
 	}
 
-	// Function to handle click outside the score rows
+	/**
+	 * Handles clicks outside of score rows to close expanded rows
+	 * @param {MouseEvent} event - The click event
+	 */
 	function handleClickOutside(event) {
 		if (!event.target.closest(".score-row")) {
 			activeRowIndex = null;
@@ -81,39 +111,19 @@
 			>
 				<div class="w-1/2 text-center">
 					{score.teamA}
-					{#if score.tichuA}<span class="badge badge-success"
-							>tichu</span
-						>{/if}
-					{#if score.grandA}<span class="badge badge-success"
-							>TICHU</span
-						>{/if}
-					{#if score.lostTichuA}<span class="badge badge-error"
-							>tichu</span
-						>{/if}
-					{#if score.lostGrandA}<span class="badge badge-error"
-							>TICHU</span
-						>{/if}
-					{#if score.doubleWinA}<span class="badge badge-warning"
-							>double-win</span
-						>{/if}
+					{#if score.tichuA}<span class="badge badge-success">tichu</span>{/if}
+					{#if score.grandA}<span class="badge badge-success">TICHU</span>{/if}
+					{#if score.lostTichuA}<span class="badge badge-error">tichu</span>{/if}
+					{#if score.lostGrandA}<span class="badge badge-error">TICHU</span>{/if}
+					{#if score.doubleWinA}<span class="badge badge-warning">double-win</span>{/if}
 				</div>
 				<div class="w-1/2 text-center">
 					{score.teamB}
-					{#if score.tichuB}<span class="badge badge-success"
-							>tichu</span
-						>{/if}
-					{#if score.grandB}<span class="badge badge-success"
-							>TICHU</span
-						>{/if}
-					{#if score.lostTichuB}<span class="badge badge-error"
-							>tichu</span
-						>{/if}
-					{#if score.lostGrandB}<span class="badge badge-error"
-							>TICHU</span
-						>{/if}
-					{#if score.doubleWinB}<span class="badge badge-warning"
-							>double win</span
-						>{/if}
+					{#if score.tichuB}<span class="badge badge-success">tichu</span>{/if}
+					{#if score.grandB}<span class="badge badge-success">TICHU</span>{/if}
+					{#if score.lostTichuB}<span class="badge badge-error">tichu</span>{/if}
+					{#if score.lostGrandB}<span class="badge badge-error">TICHU</span>{/if}
+					{#if score.doubleWinB}<span class="badge badge-warning">double win</span>{/if}
 				</div>
 				{#if activeRowIndex === index}
 					<button
