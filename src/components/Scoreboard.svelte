@@ -104,51 +104,61 @@
 	<div class="flex flex-col space-y-2">
 		{#each scores as score, index}
 			<div
-				class="score-row flex items-center justify-between p-4 bg-primary rounded-lg relative"
+				class="score-row flex items-center justify-between p-4 bg-primary rounded-lg relative text-primary-content"
 				role="button"
 				tabindex="0"
 				on:click={() => handleRowClick(index)}
 				on:keydown={(event) => handleRowKey(event, index)}
 			>
-				<div class="w-1/2 text-center">
+				<div class="w-1/2 text-center font-medium">
 					{score.teamA}
-					{#if score.tichuA}<span class="badge badge-success"
+					{#if score.tichuA}<span
+							class="badge badge-success text-success-content"
 							>{$t?.gameControls?.tichu || "tichu"}</span
 						>{/if}
-					{#if score.grandA}<span class="badge badge-success"
+					{#if score.grandA}<span
+							class="badge badge-success text-success-content"
 							>{$t?.gameControls?.grandTichu || "TICHU"}</span
 						>{/if}
-					{#if score.lostTichuA}<span class="badge badge-error"
+					{#if score.lostTichuA}<span
+							class="badge badge-error text-error-content"
 							>{$t?.gameControls?.lostTichu || "tichu"}</span
 						>{/if}
-					{#if score.lostGrandA}<span class="badge badge-error"
+					{#if score.lostGrandA}<span
+							class="badge badge-error text-error-content"
 							>{$t?.gameControls?.lostGrandTichu || "TICHU"}</span
 						>{/if}
-					{#if score.doubleWinA}<span class="badge badge-warning"
+					{#if score.doubleWinA}<span
+							class="badge badge-warning text-warning-content"
 							>{$t?.gameControls?.doubleWin || "double-win"}</span
 						>{/if}
 				</div>
-				<div class="w-1/2 text-center">
+				<div class="w-1/2 text-center font-medium">
 					{score.teamB}
-					{#if score.tichuB}<span class="badge badge-success"
+					{#if score.tichuB}<span
+							class="badge badge-success text-success-content"
 							>{$t?.gameControls?.tichu || "tichu"}</span
 						>{/if}
-					{#if score.grandB}<span class="badge badge-success"
+					{#if score.grandB}<span
+							class="badge badge-success text-success-content"
 							>{$t?.gameControls?.grandTichu || "TICHU"}</span
 						>{/if}
-					{#if score.lostTichuB}<span class="badge badge-error"
+					{#if score.lostTichuB}<span
+							class="badge badge-error text-error-content"
 							>{$t?.gameControls?.lostTichu || "tichu"}</span
 						>{/if}
-					{#if score.lostGrandB}<span class="badge badge-error"
+					{#if score.lostGrandB}<span
+							class="badge badge-error text-error-content"
 							>{$t?.gameControls?.lostGrandTichu || "TICHU"}</span
 						>{/if}
-					{#if score.doubleWinB}<span class="badge badge-warning"
+					{#if score.doubleWinB}<span
+							class="badge badge-warning text-warning-content"
 							>{$t?.gameControls?.doubleWin || "double win"}</span
 						>{/if}
 				</div>
 				{#if activeRowIndex === index}
 					<button
-						class="absolute right-4 btn btn-error btn-sm"
+						class="absolute right-4 btn btn-error btn-sm text-error-content"
 						on:click={() => deleteScore(index)}>Delete</button
 					>
 				{/if}
