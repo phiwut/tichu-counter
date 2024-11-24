@@ -21,8 +21,18 @@ export default {
     tichu: 'Tichu',
     lostTichu: 'Verlorenes Tichu',
     grandTichu: 'Grosses Tichu',
-    lostGrandTichu: 'Verlorenes Großes Tichu',
-    doubleWin: 'Doppelsieg'
+    lostGrandTichu: 'Verlorenes Grosses Tichu',
+    doubleWin: 'Doppelsieg',
+    delete: 'Löschen',
+    score: 'Punkte',
+    tichuLabel: 'Tichu',
+    grandTichuLabel: 'Grosses Tichu',
+    lostTichuLabel: 'Verlorenes Tichu',
+    lostGrandTichuLabel: 'Verlorenes Grosses Tichu',
+    doubleWinLabel: 'Doppelsieg',
+    scoreInputHelper: 'Punkte eingeben',
+    scoreTeamA: 'Punkte Team A',
+    scoreTeamB: 'Punkte Team B'
   },
   languages: {
     en: 'Englisch',
@@ -34,5 +44,16 @@ export default {
   },
   info: {
     description: 'Diese Anwendung wurde entwickelt, um Ihre Spieleinstellungen effizient zu verwalten. Für weitere Informationen besuchen Sie unsere Website.'
+  },
+  gameComplete: {
+    title: 'Spiel beendet',
+    winner: 'Der Gewinner ist {winner}!',
+    draft: 'Das Spiel ist unentschieden!',
+    totalGames: 'Gesamt Spiele',
+    totalPoints: 'Gesamt Punkte',
+    teamStats: 'Team Statistiken',
+    specialMoves: 'Spezialzüge',
+    tichuSuccess: 'Tichu Erfolg',
+    newGame: 'Neues Spiel'
   }
 }; 

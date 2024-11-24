@@ -13,13 +13,21 @@ export default {
     prerender: {
       handleMissingId: 'ignore',
       handleHttpError: ({ path, referrer, message }) => {
-        // Ignore missing splash.png and other assets
-        if (path === '/splash.png' || path.startsWith('/assets/')) {
+        // Ignore common development assets
+        if (
+          path.endsWith('.map') || 
+          path.includes('workbox-') || 
+          path === '/splash.png' || 
+          path.startsWith('/assets/')
+        ) {
           return;
         }
         // Throw error for other cases
         throw new Error(message);
       }
+    },
+    serviceWorker: {
+      register: false
     }
   },
   preprocess: preprocess({

@@ -159,7 +159,8 @@
 				{#if activeRowIndex === index}
 					<button
 						class="absolute right-4 btn btn-error btn-sm text-error-content"
-						on:click={() => deleteScore(index)}>Delete</button
+						on:click={() => deleteScore(index)}
+						>{$t?.gameControls?.delete || "Delete"}</button
 					>
 				{/if}
 			</div>

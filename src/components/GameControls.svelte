@@ -18,9 +18,10 @@
 	import { scoreStore } from "../stores/scoreStore";
 	import { settingsStore } from "../stores/settingsStore";
 	import { get } from "svelte/store";
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher } from "svelte";
 	import InputField from "./InputField.svelte";
 	import Modal from "./Modal.svelte";
+	import { t } from "../lib/translations";
 
 	const dispatch = createEventDispatcher();
 
@@ -221,7 +222,7 @@
 	 * Dispatches an event to open the settings modal
 	 */
 	function openSettingsModal() {
-		dispatch('openSettings');
+		dispatch("openSettings");
 	}
 </script>
 
@@ -231,7 +232,7 @@
 	<div class="w-full px-6 space-x-6 flex justify-between mb-4">
 		<InputField
 			value={scoreA}
-			placeholder="Score"
+			placeholder={$t?.gameControls?.scoreInputHelper || "Enter score"}
 			onInput={(event) =>
 				validateAndSetScore(
 					event,
@@ -241,7 +242,7 @@
 		/>
 		<InputField
 			value={scoreB}
-			placeholder="Score"
+			placeholder={$t?.gameControls?.scoreInputHelper || "Enter score"}
 			onInput={(event) =>
 				validateAndSetScore(
 					event,
@@ -262,7 +263,7 @@
 		<tbody>
 			<!-- Tichu option -->
 			<tr>
-				<td>Tichu</td>
+				<td>{$t?.gameControls?.tichuLabel || "Tichu"}</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -292,7 +293,7 @@
 			</tr>
 			<!-- Lost Tichu option -->
 			<tr>
-				<td>Lost Tichu</td>
+				<td>{$t?.gameControls?.lostTichuLabel || "Lost Tichu"}</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -312,7 +313,7 @@
 			</tr>
 			<!-- Grand Tichu option -->
 			<tr>
-				<td>Grand Tichu</td>
+				<td>{$t?.gameControls?.grandTichuLabel || "Grand Tichu"}</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -342,7 +343,10 @@
 			</tr>
 			<!-- Lost Grand Tichu option -->
 			<tr>
-				<td>Lost Grand Tichu</td>
+				<td
+					>{$t?.gameControls?.lostGrandTichuLabel ||
+						"Lost Grand Tichu"}</td
+				>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -362,7 +366,7 @@
 			</tr>
 			<!-- Double Win option -->
 			<tr>
-				<td>Double Win</td>
+				<td>{$t?.gameControls?.doubleWinLabel || "Double Win"}</td>
 				<td class="text-center">
 					<input
 						type="checkbox"
@@ -401,26 +405,47 @@
 		on:click={addScore}
 		disabled={isAddButtonDisabled}
 	>
-		Add Score
+		{$t?.gameControls?.addScore || "Add Score"}
 	</button>
 
 	<button
 		class="btn btn-info mr-2"
 		on:click={openSettingsModal}
-		aria-label="Settings"
+		aria-label={$t?.settings?.title || "Settings"}
 	>
-		<img src="/settings.svg" alt="Settings" width="24" height="24" />
+		<img
+			src="/settings.svg"
+			alt={$t?.settings?.title || "Settings"}
+			width="24"
+			height="24"
+		/>
 	</button>
-	<button class="btn btn-error" on:click={handleReset} aria-label="Reset">
-		<img src="/trash.svg" alt="Reset" width="24" height="24" />
+	<button
+		class="btn btn-error"
+		on:click={handleReset}
+		aria-label={$t?.gameControls?.reset || "Reset"}
+	>
+		<img
+			src="/trash.svg"
+			alt={$t?.gameControls?.reset || "Reset"}
+			width="24"
+			height="24"
+		/>
 	</button>
 </div>
 
 <!-- Reset confirmation modal -->
-<Modal show={showResetModal} title="Confirm Reset">
-	<p slot="content">Are you sure you want to reset the scores?</p>
+<Modal show={showResetModal} title={$t?.gameControls?.reset || "Reset"}>
+	<p slot="content">
+		{$t?.gameControls?.confirmReset ||
+			"Are you sure you want to reset the scores?"}
+	</p>
 	<div slot="actions">
-		<button class="btn" on:click={closeResetModal}>No</button>
-		<button class="btn btn-error" on:click={confirmReset}>Yes</button>
+		<button class="btn" on:click={closeResetModal}
+			>{$t?.gameControls?.no || "No"}</button
+		>
+		<button class="btn btn-error" on:click={confirmReset}
+			>{$t?.gameControls?.yes || "Yes"}</button
+		>
 	</div>
 </Modal>

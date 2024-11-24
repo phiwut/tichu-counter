@@ -20,6 +20,7 @@
 <script>
 	import { settingsStore } from "../stores/settingsStore";
 	import { languageStore } from "../stores/languageStore";
+	import { scoreStore } from "../stores/scoreStore";
 	import { t } from "../lib/translations";
 	import { get } from "svelte/store";
 	import { onMount } from "svelte";
@@ -30,6 +31,9 @@
 
 	let showWinner = false;
 	let winner = null;
+	let scores = [];
+	let totalA = 0;
+	let totalB = 0;
 
 	let activeTab = "game";
 	let teamA;
@@ -43,6 +47,21 @@
 		gameLimit = settings.gameLimit;
 	});
 
+	scoreStore.subscribe((value) => {
+		scores = value.scores;
+		totalA = value.totalA;
+		totalB = value.totalB;
+
+		if (gameLimit && (totalA >= gameLimit || totalB >= gameLimit)) {
+			showWinner = true;
+			if (totalA === totalB) {
+				winner = "Draft";
+			} else {
+				winner = totalA > totalB ? teamA : teamB;
+			}
+		}
+	});
+
 	function handleTabKey(event, tab) {
 		if (event.key === "Enter" || event.key === " ") {
 			activeTab = tab;
@@ -52,10 +71,46 @@
 	function resetWinner() {
 		showWinner = false;
 		winner = null;
+		scoreStore.update((store) => ({
+			...store,
+			scores: [],
+			totalA: 0,
+			totalB: 0,
+		}));
 	}
 
 	function changeTheme(theme) {
 		document.documentElement.setAttribute("data-theme", theme);
+	}
+
+	function calculateTichuSuccess(scores, team) {
+		const tichuAttempts = scores.filter(
+			(score) => score[`tichu${team}`] || score[`grand${team}`],
+		).length;
+
+		const tichuSuccesses = scores.filter(
+			(score) =>
+				(score[`tichu${team}`] && !score[`lostTichu${team}`]) ||
+				(score[`grand${team}`] && !score[`lostGrand${team}`]),
+		).length;
+
+		return tichuAttempts === 0
+			? 0
+			: Math.round((tichuSuccesses / tichuAttempts) * 100);
+	}
+
+	function countSpecialMoves(scores, team, type) {
+		switch (type) {
+			case "tichu":
+				return scores.filter((score) => score[`tichu${team}`]).length;
+			case "grand":
+				return scores.filter((score) => score[`grand${team}`]).length;
+			case "doubleWin":
+				return scores.filter((score) => score[`doubleWin${team}`])
+					.length;
+			default:
+				return 0;
+		}
 	}
 </script>
 
@@ -210,13 +265,102 @@
 	</div>
 </Modal>
 
-<Modal show={showWinner} title="Game Complete">
-	<p slot="content">
-		{winner === "Draft"
-			? "The game is a draft!"
-			: `The winner is ${winner}!`}
-	</p>
+<Modal show={showWinner} title={$t?.gameComplete?.title || "Game Complete"}>
+	<div slot="content" class="space-y-4">
+		<div class="text-center text-2xl font-bold mb-6">
+			{winner === "Draft"
+				? $t?.gameComplete?.draft || "The game is a draft!"
+				: (
+						$t?.gameComplete?.winner || "The winner is {winner}!"
+					).replace("{winner}", winner)}
+		</div>
+
+		<div class="stats stats-vertical lg:stats-horizontal shadow w-full">
+			<div class="stat">
+				<div class="stat-title">
+					{$t?.gameComplete?.totalGames || "Total Games"}
+				</div>
+				<div class="stat-value text-primary">{scores.length}</div>
+			</div>
+
+			<div class="stat">
+				<div class="stat-title">
+					{$t?.gameComplete?.totalPoints || "Total Points"}
+				</div>
+				<div class="stat-value text-primary">{totalA + totalB}</div>
+			</div>
+		</div>
+
+		<div class="divider">
+			{$t?.gameComplete?.teamStats || "Team Statistics"}
+		</div>
+
+		<div class="stats stats-vertical shadow w-full">
+			<div class="stat">
+				<div class="stat-title">{teamA}</div>
+				<div class="stat-value text-primary">{totalA}</div>
+				<div class="stat-desc">
+					{$t?.gameComplete?.tichuSuccess || "Tichu Success"}: {calculateTichuSuccess(
+						scores,
+						"A",
+					)}%
+				</div>
+			</div>
+
+			<div class="stat">
+				<div class="stat-title">{teamB}</div>
+				<div class="stat-value text-primary">{totalB}</div>
+				<div class="stat-desc">
+					{$t?.gameComplete?.tichuSuccess || "Tichu Success"}: {calculateTichuSuccess(
+						scores,
+						"B",
+					)}%
+				</div>
+			</div>
+		</div>
+
+		<div class="divider">
+			{$t?.gameComplete?.specialMoves || "Special Moves"}
+		</div>
+
+		<div class="grid grid-cols-2 gap-4">
+			<div class="bg-base-200 p-4 rounded-lg">
+				<h3 class="font-bold mb-2">{teamA}</h3>
+				<ul class="space-y-2">
+					<li>Tichu: {countSpecialMoves(scores, "A", "tichu")}</li>
+					<li>
+						Grand Tichu: {countSpecialMoves(scores, "A", "grand")}
+					</li>
+					<li>
+						Double Wins: {countSpecialMoves(
+							scores,
+							"A",
+							"doubleWin",
+						)}
+					</li>
+				</ul>
+			</div>
+			<div class="bg-base-200 p-4 rounded-lg">
+				<h3 class="font-bold mb-2">{teamB}</h3>
+				<ul class="space-y-2">
+					<li>Tichu: {countSpecialMoves(scores, "B", "tichu")}</li>
+					<li>
+						Grand Tichu: {countSpecialMoves(scores, "B", "grand")}
+					</li>
+					<li>
+						Double Wins: {countSpecialMoves(
+							scores,
+							"B",
+							"doubleWin",
+						)}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 	<div slot="actions">
-		<button class="btn" on:click={resetWinner}>OK</button>
+		<button class="btn btn-primary" on:click={resetWinner}
+			>{$t?.gameComplete?.newGame || "New Game"}</button
+		>
 	</div>
 </Modal>

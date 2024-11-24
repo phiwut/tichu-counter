@@ -8,7 +8,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module'
       },
       manifest: {
         name: 'Tichu.xyz (Tichu Counter)',
@@ -34,7 +35,18 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        globDirectory: 'build',
+        globPatterns: [
+          '**/*.{js,css,html,ico,png,svg}',
+          'manifest.webmanifest'
+        ],
+        globIgnores: [
+          '**/node_modules/**/*',
+          '**/dev-dist/**/*',
+          '**/.svelte-kit/**/*',
+          '**/workbox-*.js',
+          '**/sw.js'
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -43,27 +55,43 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
               }
             }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|ico)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'static-assets',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources'
+            }
           }
         ],
+        sourcemap: false,
         cleanupOutdatedCaches: true,
-        sourcemap: true,
-        navigateFallback: 'index.html',
         skipWaiting: true,
         clientsClaim: true,
-        navigateFallbackDenylist: [/^\/api\//]
+        navigateFallback: null,
+        mode: 'production'
       },
-      strategies: 'generateSW',
-      includeAssets: ['favicon.svg', 'icon-192x192.png', 'icon-512x512.png'],
-      fallback: {
-        image: '/offline.png',
-        document: '/offline'
-      }
+      injectRegister: 'auto'
     })
-  ]
+  ],
+  build: {
+    sourcemap: false
+  }
 });
