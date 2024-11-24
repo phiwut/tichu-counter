@@ -14,6 +14,7 @@
 <script>
 	import { settingsStore } from "../stores/settingsStore";
 	import { scoreStore } from "../stores/scoreStore";
+	import { t } from "../lib/translations";
 
 	// Local state variables
 	let totalA = 0;
@@ -38,12 +39,12 @@
 		<div class="stat place-items-center">
 			<div class="stat-title">{teamA}</div>
 			<div class="stat-value text-primary">{totalA}</div>
-			<div class="stat-desc">Points</div>
+			<div class="stat-desc">{$t?.header?.points || "Points"}</div>
 		</div>
 		<div class="stat place-items-center">
 			<div class="stat-title">{teamB}</div>
 			<div class="stat-value text-primary">{totalB}</div>
-			<div class="stat-desc">Points</div>
+			<div class="stat-desc">{$t?.header?.points || "Points"}</div>
 		</div>
 	</div>
 </div>

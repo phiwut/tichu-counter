@@ -4,15 +4,25 @@ import preprocess from 'svelte-preprocess';
 export default {
   kit: {
     adapter: adapter({
-      // Define fallback HTML page for dynamic routes
-      fallback: 'index.html'
+      pages: 'build',
+      assets: 'build',
+      fallback: 'index.html',
+      precompress: false,
+      strict: true
     }),
     prerender: {
-      // Pre-render all pages
-      entries: ['*']
+      handleMissingId: 'ignore',
+      handleHttpError: ({ path, referrer, message }) => {
+        // Ignore missing splash.png and other assets
+        if (path === '/splash.png' || path.startsWith('/assets/')) {
+          return;
+        }
+        // Throw error for other cases
+        throw new Error(message);
+      }
     }
   },
   preprocess: preprocess({
     postcss: true,
-  }),
+  })
 };

@@ -15,6 +15,7 @@
 
 <script>
 	import { scoreStore } from "../stores/scoreStore";
+	import { t } from "../lib/translations";
 	import { onMount } from "svelte";
 
 	let scores = [];
@@ -111,19 +112,39 @@
 			>
 				<div class="w-1/2 text-center">
 					{score.teamA}
-					{#if score.tichuA}<span class="badge badge-success">tichu</span>{/if}
-					{#if score.grandA}<span class="badge badge-success">TICHU</span>{/if}
-					{#if score.lostTichuA}<span class="badge badge-error">tichu</span>{/if}
-					{#if score.lostGrandA}<span class="badge badge-error">TICHU</span>{/if}
-					{#if score.doubleWinA}<span class="badge badge-warning">double-win</span>{/if}
+					{#if score.tichuA}<span class="badge badge-success"
+							>{$t?.gameControls?.tichu || "tichu"}</span
+						>{/if}
+					{#if score.grandA}<span class="badge badge-success"
+							>{$t?.gameControls?.grandTichu || "TICHU"}</span
+						>{/if}
+					{#if score.lostTichuA}<span class="badge badge-error"
+							>{$t?.gameControls?.lostTichu || "tichu"}</span
+						>{/if}
+					{#if score.lostGrandA}<span class="badge badge-error"
+							>{$t?.gameControls?.lostGrandTichu || "TICHU"}</span
+						>{/if}
+					{#if score.doubleWinA}<span class="badge badge-warning"
+							>{$t?.gameControls?.doubleWin || "double-win"}</span
+						>{/if}
 				</div>
 				<div class="w-1/2 text-center">
 					{score.teamB}
-					{#if score.tichuB}<span class="badge badge-success">tichu</span>{/if}
-					{#if score.grandB}<span class="badge badge-success">TICHU</span>{/if}
-					{#if score.lostTichuB}<span class="badge badge-error">tichu</span>{/if}
-					{#if score.lostGrandB}<span class="badge badge-error">TICHU</span>{/if}
-					{#if score.doubleWinB}<span class="badge badge-warning">double win</span>{/if}
+					{#if score.tichuB}<span class="badge badge-success"
+							>{$t?.gameControls?.tichu || "tichu"}</span
+						>{/if}
+					{#if score.grandB}<span class="badge badge-success"
+							>{$t?.gameControls?.grandTichu || "TICHU"}</span
+						>{/if}
+					{#if score.lostTichuB}<span class="badge badge-error"
+							>{$t?.gameControls?.lostTichu || "tichu"}</span
+						>{/if}
+					{#if score.lostGrandB}<span class="badge badge-error"
+							>{$t?.gameControls?.lostGrandTichu || "TICHU"}</span
+						>{/if}
+					{#if score.doubleWinB}<span class="badge badge-warning"
+							>{$t?.gameControls?.doubleWin || "double win"}</span
+						>{/if}
 				</div>
 				{#if activeRowIndex === index}
 					<button
