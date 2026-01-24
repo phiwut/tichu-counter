@@ -216,6 +216,15 @@
 		dispatch("openSettings");
 	}
 
+	function handleCheckboxChange(
+		event: Event,
+		setValue: (value: boolean) => void,
+	) {
+		if (event.currentTarget instanceof HTMLInputElement) {
+			setValue(event.currentTarget.checked);
+		}
+	}
+
 	const checkboxRows = [
 		{
 			id: "tichu",
@@ -349,9 +358,7 @@
 							class="checkbox checkbox-primary"
 							checked={row.checkedA()}
 							on:change={(event) =>
-								row.setA(
-									(event.target as HTMLInputElement).checked,
-								)}
+								handleCheckboxChange(event, row.setA)}
 							disabled={row.disabledA()}
 						/>
 					</td>
@@ -361,9 +368,7 @@
 							class="checkbox checkbox-primary"
 							checked={row.checkedB()}
 							on:change={(event) =>
-								row.setB(
-									(event.target as HTMLInputElement).checked,
-								)}
+								handleCheckboxChange(event, row.setB)}
 							disabled={row.disabledB()}
 						/>
 					</td>
