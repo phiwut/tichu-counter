@@ -17,28 +17,35 @@
   - Keyboard accessible for better usability
 -->
 
-<script>
+<script lang="ts">
 	import { settingsStore } from "../stores/settingsStore";
 	import { languageStore } from "../stores/languageStore";
-	import { scoreStore } from "../stores/scoreStore";
+	import { scoreStore, winnerStore } from "../stores/scoreStore";
+	import type { ScoreEntry } from "../stores/scoreStore";
 	import { t } from "../lib/translations";
 	import { get } from "svelte/store";
 	import { onMount } from "svelte";
 	import Modal from "./Modal.svelte";
+	import { toastStore } from "../stores/toastStore";
+	import {
+		buildExportPayload,
+		downloadExport,
+		parseImportPayload,
+	} from "../lib/dataExport";
 
 	export let show = false;
-	export let onClose;
+	export let onClose: () => void;
 
-	let showWinner = false;
-	let winner = null;
-	let scores = [];
+	let scores: ScoreEntry[] = [];
 	let totalA = 0;
 	let totalB = 0;
 
-	let activeTab = "game";
-	let teamA;
-	let teamB;
-	let gameLimit;
+	let activeTab: "game" | "app" | "data" | "info" = "game";
+	let teamA = "";
+	let teamB = "";
+	let gameLimit = 1000;
+	let importError = "";
+	let importInput: HTMLInputElement | null = null;
 
 	onMount(() => {
 		const settings = get(settingsStore);
@@ -51,39 +58,23 @@
 		scores = value.scores;
 		totalA = value.totalA;
 		totalB = value.totalB;
-
-		if (gameLimit && (totalA >= gameLimit || totalB >= gameLimit)) {
-			showWinner = true;
-			if (totalA === totalB) {
-				winner = "Draft";
-			} else {
-				winner = totalA > totalB ? teamA : teamB;
-			}
-		}
 	});
 
-	function handleTabKey(event, tab) {
+	function handleTabKey(event: KeyboardEvent, tab: typeof activeTab) {
 		if (event.key === "Enter" || event.key === " ") {
 			activeTab = tab;
 		}
 	}
 
 	function resetWinner() {
-		showWinner = false;
-		winner = null;
-		scoreStore.update((store) => ({
-			...store,
-			scores: [],
-			totalA: 0,
-			totalB: 0,
-		}));
+		scoreStore.resetScores();
 	}
 
-	function changeTheme(theme) {
+	function changeTheme(theme: string) {
 		document.documentElement.setAttribute("data-theme", theme);
 	}
 
-	function calculateTichuSuccess(scores, team) {
+	function calculateTichuSuccess(scores: ScoreEntry[], team: string) {
 		const tichuAttempts = scores.filter(
 			(score) => score[`tichu${team}`] || score[`grand${team}`],
 		).length;
@@ -99,7 +90,11 @@
 			: Math.round((tichuSuccesses / tichuAttempts) * 100);
 	}
 
-	function countSpecialMoves(scores, team, type) {
+	function countSpecialMoves(
+		scores: ScoreEntry[],
+		team: string,
+		type: string,
+	) {
 		switch (type) {
 			case "tichu":
 				return scores.filter((score) => score[`tichu${team}`]).length;
@@ -112,9 +107,70 @@
 				return 0;
 		}
 	}
+
+	function handleExport() {
+		const payload = buildExportPayload(
+			get(scoreStore),
+			get(settingsStore),
+			get(languageStore),
+		);
+		downloadExport(payload);
+		toastStore.addToast(
+			$t?.toast?.dataExported || "Data exported.",
+			{ type: "success" },
+		);
+	}
+
+	async function handleImport(event: Event) {
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+		if (!file) {
+			return;
+		}
+		importError = "";
+		try {
+			const payload = await file.text();
+			const data = parseImportPayload(payload);
+
+			if (data.scores) {
+				scoreStore.replaceScores(data.scores as ScoreEntry[]);
+			}
+			if (data.settings) {
+				settingsStore.update((store) => ({
+					...store,
+					...data.settings,
+				}));
+				teamA = data.settings.teamA ?? teamA;
+				teamB = data.settings.teamB ?? teamB;
+				gameLimit = data.settings.gameLimit ?? gameLimit;
+			}
+			if (data.language) {
+				languageStore.update((store) => ({
+					...store,
+					...data.language,
+				}));
+			}
+
+			toastStore.addToast(
+				$t?.toast?.dataImported || "Data imported.",
+				{ type: "success" },
+			);
+		} catch (error) {
+			importError =
+				$t?.settings?.importError || "Failed to import data.";
+			toastStore.addToast(
+				$t?.settings?.importError || "Failed to import data.",
+				{ type: "error" },
+			);
+		} finally {
+			if (importInput) {
+				importInput.value = "";
+			}
+		}
+	}
 </script>
 
-<Modal {show} title={$t?.settings?.title || "Settings"} on:close={onClose}>
+<Modal {show} title={$t?.settings?.title || "Settings"} onClose={onClose}>
 	<div slot="content">
 		<div role="tablist" class="tabs tabs-bordered">
 			<button
@@ -132,6 +188,14 @@
 				on:click={() => (activeTab = "app")}
 				on:keydown={(event) => handleTabKey(event, "app")}
 				>{$t?.settings?.app || "App"}</button
+			>
+			<button
+				role="tab"
+				tabindex="0"
+				class={`tab ${activeTab === "data" ? "tab-active" : ""}`}
+				on:click={() => (activeTab = "data")}
+				on:keydown={(event) => handleTabKey(event, "data")}
+				>{$t?.settings?.data || "Data"}</button
 			>
 			<button
 				role="tab"
@@ -238,6 +302,40 @@
 						>
 					</select>
 				</div>
+			{:else if activeTab === "data"}
+				<div class="space-y-4">
+					<div>
+						<h3 class="font-semibold">
+							{$t?.settings?.exportTitle || "Export Data"}
+						</h3>
+						<p class="text-sm opacity-80">
+							{$t?.settings?.exportDescription ||
+								"Download a JSON backup of your scores and settings."}
+						</p>
+						<button class="btn btn-outline mt-2" on:click={handleExport}>
+							{$t?.settings?.exportAction || "Export"}
+						</button>
+					</div>
+					<div>
+						<h3 class="font-semibold">
+							{$t?.settings?.importTitle || "Import Data"}
+						</h3>
+						<p class="text-sm opacity-80">
+							{$t?.settings?.importDescription ||
+								"Restore scores and settings from a previous export."}
+						</p>
+						<input
+							class="file-input file-input-bordered w-full mt-2"
+							type="file"
+							accept="application/json"
+							on:change={handleImport}
+							bind:this={importInput}
+						/>
+						{#if importError}
+							<p class="text-error text-sm mt-2">{importError}</p>
+						{/if}
+					</div>
+				</div>
 			{:else if activeTab === "info"}
 				<p>
 					{$t?.info?.description ||
@@ -259,20 +357,28 @@
 					teamB,
 					gameLimit,
 				}));
+				toastStore.addToast(
+					$t?.toast?.settingsSaved || "Settings saved.",
+					{ type: "success" },
+				);
 				onClose();
 			}}>{$t?.settings?.save || "Save"}</button
 		>
 	</div>
 </Modal>
 
-<Modal show={showWinner} title={$t?.gameComplete?.title || "Game Complete"}>
+<Modal
+	show={Boolean($winnerStore)}
+	title={$t?.gameComplete?.title || "Game Complete"}
+	closeOnEsc={false}
+>
 	<div slot="content" class="space-y-4">
 		<div class="text-center text-2xl font-bold mb-6">
-			{winner === "Draft"
+			{$winnerStore === "Draft"
 				? $t?.gameComplete?.draft || "The game is a draft!"
 				: (
 						$t?.gameComplete?.winner || "The winner is {winner}!"
-					).replace("{winner}", winner)}
+					).replace("{winner}", $winnerStore)}
 		</div>
 
 		<div class="stats stats-vertical lg:stats-horizontal shadow w-full">
@@ -327,12 +433,22 @@
 			<div class="bg-base-200 p-4 rounded-lg">
 				<h3 class="font-bold mb-2">{teamA}</h3>
 				<ul class="space-y-2">
-					<li>Tichu: {countSpecialMoves(scores, "A", "tichu")}</li>
 					<li>
-						Grand Tichu: {countSpecialMoves(scores, "A", "grand")}
+						{$t?.gameComplete?.tichuLabel || "Tichu"}: {countSpecialMoves(
+							scores,
+							"A",
+							"tichu",
+						)}
 					</li>
 					<li>
-						Double Wins: {countSpecialMoves(
+						{$t?.gameComplete?.grandTichuLabel || "Grand Tichu"}: {countSpecialMoves(
+							scores,
+							"A",
+							"grand",
+						)}
+					</li>
+					<li>
+						{$t?.gameComplete?.doubleWinLabel || "Double Wins"}: {countSpecialMoves(
 							scores,
 							"A",
 							"doubleWin",
@@ -343,12 +459,22 @@
 			<div class="bg-base-200 p-4 rounded-lg">
 				<h3 class="font-bold mb-2">{teamB}</h3>
 				<ul class="space-y-2">
-					<li>Tichu: {countSpecialMoves(scores, "B", "tichu")}</li>
 					<li>
-						Grand Tichu: {countSpecialMoves(scores, "B", "grand")}
+						{$t?.gameComplete?.tichuLabel || "Tichu"}: {countSpecialMoves(
+							scores,
+							"B",
+							"tichu",
+						)}
 					</li>
 					<li>
-						Double Wins: {countSpecialMoves(
+						{$t?.gameComplete?.grandTichuLabel || "Grand Tichu"}: {countSpecialMoves(
+							scores,
+							"B",
+							"grand",
+						)}
+					</li>
+					<li>
+						{$t?.gameComplete?.doubleWinLabel || "Double Wins"}: {countSpecialMoves(
 							scores,
 							"B",
 							"doubleWin",

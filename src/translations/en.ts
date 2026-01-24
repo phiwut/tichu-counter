@@ -3,6 +3,7 @@ export default {
     title: 'Settings',
     game: 'Game',
     app: 'App',
+    data: 'Data',
     info: 'Info',
     teamAName: 'Team A Name',
     teamBName: 'Team B Name',
@@ -10,7 +11,13 @@ export default {
     appTheme: 'App Theme',
     language: 'Language',
     close: 'Close',
-    save: 'Save'
+    save: 'Save',
+    exportTitle: 'Export Data',
+    exportDescription: 'Download a JSON backup of your scores and settings.',
+    exportAction: 'Export',
+    importTitle: 'Import Data',
+    importDescription: 'Restore scores and settings from a previous export.',
+    importError: 'Failed to import data.'
   },
   gameControls: {
     addScore: 'Add Score',
@@ -32,7 +39,9 @@ export default {
     doubleWinLabel: 'Double Win',
     scoreInputHelper: 'Enter score',
     scoreTeamA: 'Score Team A',
-    scoreTeamB: 'Score Team B'
+    scoreTeamB: 'Score Team B',
+    undo: 'Undo',
+    redo: 'Redo'
   },
   languages: {
     en: 'English',
@@ -54,6 +63,33 @@ export default {
     teamStats: 'Team Statistics',
     specialMoves: 'Special Moves',
     tichuSuccess: 'Tichu Success',
-    newGame: 'New Game'
+    newGame: 'New Game',
+    tichuLabel: 'Tichu',
+    grandTichuLabel: 'Grand Tichu',
+    doubleWinLabel: 'Double Wins'
+  },
+  toast: {
+    scoreAdded: 'Score added successfully.',
+    scoreDeleted: 'Score deleted.',
+    gameReset: 'Game reset.',
+    settingsSaved: 'Settings saved.',
+    dataExported: 'Data exported.',
+    dataImported: 'Data imported.',
+    undo: 'Undid last action.',
+    redo: 'Redid last action.',
+    dismiss: 'Dismiss'
+  },
+  reloadPrompt: {
+    offlineReady: 'App ready to work offline',
+    updateAvailable: 'New content available, click on reload button to update.',
+    reload: 'Reload',
+    close: 'Close'
+  },
+  offline: {
+    title: 'Tichu Counter',
+    backOnline: 'You are back online!',
+    reload: 'Reload Page',
+    offline: 'You are currently offline.',
+    instructions: 'Please check your internet connection and try again.'
   }
-}; 
+};

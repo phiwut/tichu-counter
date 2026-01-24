@@ -11,7 +11,7 @@
   - Sticky positioning at the top of the page
 -->
 
-<script>
+<script lang="ts">
 	import { settingsStore } from "../stores/settingsStore";
 	import { scoreStore } from "../stores/scoreStore";
 	import { t } from "../lib/translations";

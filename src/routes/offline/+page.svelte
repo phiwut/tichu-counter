@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
+  import { t } from '../../lib/translations';
 
   let online = true;
 
@@ -28,18 +29,18 @@
 </script>
 
 <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-  <h1 class="text-4xl font-bold mb-4">Tichu Counter</h1>
+  <h1 class="text-4xl font-bold mb-4">{$t?.offline?.title || "Tichu Counter"}</h1>
   {#if online}
-    <p class="text-xl mb-4">You are back online!</p>
+    <p class="text-xl mb-4">{$t?.offline?.backOnline || "You are back online!"}</p>
     <button
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       on:click={reloadPage}
     >
-      Reload Page
+      {$t?.offline?.reload || "Reload Page"}
     </button>
   {:else}
-    <p class="text-xl mb-4">You are currently offline.</p>
-    <p class="text-lg mb-4">Please check your internet connection and try again.</p>
+    <p class="text-xl mb-4">{$t?.offline?.offline || "You are currently offline."}</p>
+    <p class="text-lg mb-4">{$t?.offline?.instructions || "Please check your internet connection and try again."}</p>
   {/if}
 </div>
 
