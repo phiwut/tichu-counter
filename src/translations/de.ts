@@ -3,6 +3,7 @@ export default {
     title: 'Einstellungen',
     game: 'Spiel',
     app: 'App',
+    data: 'Daten',
     info: 'Info',
     teamAName: 'Team A Name',
     teamBName: 'Team B Name',
@@ -10,7 +11,13 @@ export default {
     appTheme: 'App-Theme',
     language: 'Sprache',
     close: 'Schliessen',
-    save: 'Speichern'
+    save: 'Speichern',
+    exportTitle: 'Daten exportieren',
+    exportDescription: 'JSON-Backup der Punkte und Einstellungen herunterladen.',
+    exportAction: 'Exportieren',
+    importTitle: 'Daten importieren',
+    importDescription: 'Punkte und Einstellungen aus einem Export wiederherstellen.',
+    importError: 'Datenimport fehlgeschlagen.'
   },
   gameControls: {
     addScore: 'Punkte hinzufügen',
@@ -32,7 +39,9 @@ export default {
     doubleWinLabel: 'Doppelsieg',
     scoreInputHelper: 'Punkte eingeben',
     scoreTeamA: 'Punkte Team A',
-    scoreTeamB: 'Punkte Team B'
+    scoreTeamB: 'Punkte Team B',
+    undo: 'Rückgängig',
+    redo: 'Wiederholen'
   },
   languages: {
     en: 'Englisch',
@@ -55,6 +64,33 @@ export default {
     teamStats: 'Team Statistiken',
     specialMoves: 'Spezialzüge',
     tichuSuccess: 'Tichu Erfolg',
-    newGame: 'Neues Spiel'
+    newGame: 'Neues Spiel',
+    tichuLabel: 'Tichu',
+    grandTichuLabel: 'Grosses Tichu',
+    doubleWinLabel: 'Doppelsiege'
+  },
+  toast: {
+    scoreAdded: 'Punkte hinzugefügt.',
+    scoreDeleted: 'Punkte gelöscht.',
+    gameReset: 'Spiel zurückgesetzt.',
+    settingsSaved: 'Einstellungen gespeichert.',
+    dataExported: 'Daten exportiert.',
+    dataImported: 'Daten importiert.',
+    undo: 'Letzte Aktion rückgängig gemacht.',
+    redo: 'Aktion wiederholt.',
+    dismiss: 'Schliessen'
+  },
+  reloadPrompt: {
+    offlineReady: 'App ist offline verfügbar',
+    updateAvailable: 'Neue Inhalte verfügbar. Klicken Sie auf „Neu laden“, um zu aktualisieren.',
+    reload: 'Neu laden',
+    close: 'Schliessen'
+  },
+  offline: {
+    title: 'Tichu Counter',
+    backOnline: 'Sie sind wieder online!',
+    reload: 'Seite neu laden',
+    offline: 'Sie sind derzeit offline.',
+    instructions: 'Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.'
   }
-}; 
+};

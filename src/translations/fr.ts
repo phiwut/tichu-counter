@@ -3,6 +3,7 @@ export default {
     title: 'Paramètres',
     game: 'Jeu',
     app: 'App',
+    data: 'Données',
     info: 'Info',
     teamAName: 'Nom équipe A',
     teamBName: 'Nom équipe B',
@@ -10,7 +11,13 @@ export default {
     appTheme: 'Thème',
     language: 'Langue',
     close: 'Fermer',
-    save: 'Enregistrer'
+    save: 'Enregistrer',
+    exportTitle: 'Exporter les données',
+    exportDescription: 'Télécharger une sauvegarde JSON des scores et paramètres.',
+    exportAction: 'Exporter',
+    importTitle: 'Importer des données',
+    importDescription: 'Restaurer les scores et paramètres depuis un export.',
+    importError: 'Échec de l\'importation des données.'
   },
   gameControls: {
     addScore: 'Ajouter score',
@@ -32,7 +39,9 @@ export default {
     doubleWinLabel: 'Double Victoire',
     scoreInputHelper: 'Entrer le score',
     scoreTeamA: 'Score Équipe A',
-    scoreTeamB: 'Score Équipe B'
+    scoreTeamB: 'Score Équipe B',
+    undo: 'Annuler',
+    redo: 'Rétablir'
   },
   languages: {
     en: 'Anglais',
@@ -55,6 +64,33 @@ export default {
     teamStats: 'Statistiques d\'Équipe',
     specialMoves: 'Coups Spéciaux',
     tichuSuccess: 'Réussite Tichu',
-    newGame: 'Nouvelle Partie'
+    newGame: 'Nouvelle Partie',
+    tichuLabel: 'Tichu',
+    grandTichuLabel: 'Grand Tichu',
+    doubleWinLabel: 'Doubles Victoires'
+  },
+  toast: {
+    scoreAdded: 'Score ajouté.',
+    scoreDeleted: 'Score supprimé.',
+    gameReset: 'Partie réinitialisée.',
+    settingsSaved: 'Paramètres enregistrés.',
+    dataExported: 'Données exportées.',
+    dataImported: 'Données importées.',
+    undo: 'Dernière action annulée.',
+    redo: 'Action rétablie.',
+    dismiss: 'Fermer'
+  },
+  reloadPrompt: {
+    offlineReady: 'L\'application est prête hors ligne',
+    updateAvailable: 'Nouveau contenu disponible, cliquez sur recharger pour mettre à jour.',
+    reload: 'Recharger',
+    close: 'Fermer'
+  },
+  offline: {
+    title: 'Tichu Counter',
+    backOnline: 'Vous êtes de nouveau en ligne !',
+    reload: 'Recharger la page',
+    offline: 'Vous êtes actuellement hors ligne.',
+    instructions: 'Veuillez vérifier votre connexion Internet et réessayer.'
   }
-}; 
+};

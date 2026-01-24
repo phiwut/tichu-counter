@@ -15,16 +15,16 @@
   - Custom input handler
 -->
 
-<script>
-	export let value;
-	export let placeholder;
-	export let onInput;
+<script lang="ts">
+	export let value: string | number;
+	export let placeholder: string;
+	export let onInput: (event: Event) => void;
 
 	/**
 	 * Handles the input event and calls the provided onInput function
 	 * @param {Event} event - The input event
 	 */
-	function handleInput(event) {
+	function handleInput(event: Event) {
 		onInput(event);
 	}
 </script>
