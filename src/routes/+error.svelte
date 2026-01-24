@@ -1,6 +1,15 @@
 <script>
 	import { page } from "$app/stores";
+	import { SITE_NAME } from "$lib/seo";
 </script>
+
+<svelte:head>
+	<title>
+		{$page.status === 404 ? `Page not found - ${SITE_NAME}` : `Error - ${SITE_NAME}`}
+	</title>
+	<meta name="description" content="An error occurred while loading this page." />
+	<meta name="robots" content="noindex, nofollow" />
+</svelte:head>
 
 <div class="flex flex-col items-center justify-center min-h-screen p-4">
 	<h1 class="text-4xl font-bold mb-4">

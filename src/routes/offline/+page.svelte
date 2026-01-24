@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { t } from '../../lib/translations';
+  import { SITE_NAME, SITE_URL } from '$lib/seo';
 
   let online = true;
 
@@ -27,6 +28,16 @@
     window.location.reload();
   }
 </script>
+
+<svelte:head>
+  <title>Offline - {SITE_NAME}</title>
+  <meta
+    name="description"
+    content="You are offline. Check your internet connection to keep using Tichu Counter."
+  />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href={`${SITE_URL}/offline`} />
+</svelte:head>
 
 <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
   <h1 class="text-4xl font-bold mb-4">{$t?.offline?.title || "Tichu Counter"}</h1>

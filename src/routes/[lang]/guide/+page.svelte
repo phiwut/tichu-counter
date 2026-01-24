@@ -1,4 +1,7 @@
 <script>
+  import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, SITE_NAME, SITE_URL } from '$lib/seo';
+  import { guideLanguages } from '$lib/guideData.js';
+
   export let data;
 
   const { lang, meta, pages } = data;
@@ -25,11 +28,33 @@
   };
 
   const copy = ui[lang] || ui.en;
+  const canonicalUrl = `${SITE_URL}/${lang}/guide`;
+  const alternates = guideLanguages.map((code) => ({
+    code,
+    href: `${SITE_URL}/${code}/guide`
+  }));
 </script>
 
 <svelte:head>
   <title>{meta.title}</title>
   <meta name="description" content={meta.description} />
+  <link rel="canonical" href={canonicalUrl} />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:site_name" content={SITE_NAME} />
+  <meta property="og:title" content={meta.title} />
+  <meta property="og:description" content={meta.description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image:alt" content={DEFAULT_OG_IMAGE_ALT} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={meta.title} />
+  <meta name="twitter:description" content={meta.description} />
+  <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
+  {#each alternates as alternate}
+    <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
+  {/each}
+  <link rel="alternate" hreflang="x-default" href={`${SITE_URL}/en/guide`} />
   <html lang={lang} />
 </svelte:head>
 
