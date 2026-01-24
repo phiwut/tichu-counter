@@ -40,7 +40,8 @@ export default {
     fr: 'Französisch'
   },
   header: {
-    points: 'Punkte'
+    points: 'Punkte',
+    guideLink: 'Tichu Leitfaden'
   },
   info: {
     description: 'Diese Anwendung wurde entwickelt, um Ihre Spieleinstellungen effizient zu verwalten. Für weitere Informationen besuchen Sie unsere Website.'
