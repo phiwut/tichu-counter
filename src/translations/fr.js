@@ -40,7 +40,8 @@ export default {
     fr: 'Français'
   },
   header: {
-    points: 'Points'
+    points: 'Points',
+    guideLink: 'Guide du Tichu'
   },
   info: {
     description: 'Cette application est conçue pour vous aider à gérer efficacement vos paramètres de jeu. Pour plus d\'informations, visitez notre site web.'
