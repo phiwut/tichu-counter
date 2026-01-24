@@ -1,4 +1,5 @@
 <script>
+  import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, SITE_NAME, SITE_URL } from '$lib/seo';
   export let data;
 
   const { lang, slug, page, related, alternateTitles } = data;
@@ -35,14 +36,34 @@
 
   const copy = ui[lang] || ui.en;
 
-  const otherLanguages = Object.entries(alternateTitles)
-    .filter(([code, title]) => title && code !== lang)
+  const alternates = Object.entries(alternateTitles)
+    .filter(([code, title]) => title)
     .map(([code, title]) => ({ code, title }));
+
+  const otherLanguages = alternates.filter((item) => item.code !== lang);
+  const canonicalUrl = `${SITE_URL}/${lang}/guide/${slug}`;
 </script>
 
 <svelte:head>
   <title>{page.title}</title>
   <meta name="description" content={page.metaDescription} />
+  <link rel="canonical" href={canonicalUrl} />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:site_name" content={SITE_NAME} />
+  <meta property="og:title" content={page.title} />
+  <meta property="og:description" content={page.metaDescription} />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+  <meta property="og:image:alt" content={DEFAULT_OG_IMAGE_ALT} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={page.title} />
+  <meta name="twitter:description" content={page.metaDescription} />
+  <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
+  {#each alternates as alternate}
+    <link rel="alternate" hreflang={alternate.code} href={`${SITE_URL}/${alternate.code}/guide/${slug}`} />
+  {/each}
+  <link rel="alternate" hreflang="x-default" href={`${SITE_URL}/en/guide/${slug}`} />
   <html lang={lang} />
 </svelte:head>
 
