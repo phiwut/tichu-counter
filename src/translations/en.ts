@@ -49,7 +49,8 @@ export default {
     fr: 'French'
   },
   header: {
-    points: 'Points'
+    points: 'Points',
+    guideLink: 'Tichu Guide'
   },
   info: {
     description: 'This application is designed to help you manage your game settings efficiently. For more information, visit our website.'

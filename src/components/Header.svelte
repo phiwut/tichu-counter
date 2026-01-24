@@ -14,6 +14,7 @@
 <script lang="ts">
 	import { settingsStore } from "../stores/settingsStore";
 	import { scoreStore } from "../stores/scoreStore";
+	import { languageStore } from "../stores/languageStore";
 	import { t } from "../lib/translations";
 
 	// Local state variables
@@ -46,5 +47,10 @@
 			<div class="stat-value text-primary">{totalB}</div>
 			<div class="stat-desc">{$t?.header?.points || "Points"}</div>
 		</div>
+	</div>
+	<div class="mt-2 text-center text-xs">
+		<a class="link link-primary" href={`/${$languageStore.language}/guide`}>
+			{$t?.header?.guideLink || "Tichu Guide"}
+		</a>
 	</div>
 </div>
