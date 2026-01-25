@@ -209,91 +209,70 @@
 		}
 	}
 
-	const checkboxRows = [
+	// Reactive checkbox rows - using $: ensures Svelte tracks all dependencies
+	// and updates disabled states when any checkbox is toggled
+	// Rules:
+	// - Tichu/Grand: Can combine with own team's Double Win (player called and won)
+	// - Lost Tichu/Grand: Cannot combine with own team's Double Win (can't lose if you won)
+	// - Lost Tichu/Grand: CAN combine with opponent's Double Win (you lost your call)
+	// - Only one team can win Tichu/Grand per round
+	// - Only one team can have Double Win per round
+	$: checkboxRows = [
 		{
 			id: "tichu",
-			label: () => $t?.gameControls?.tichuLabel || "Tichu",
-			checkedA: () => tichuA,
-			checkedB: () => tichuB,
-			setA: (value) => (tichuA = value),
-			setB: (value) => (tichuB = value),
-			disabledA: () =>
-				lostTichuA ||
-				lostGrandA ||
-				grandA ||
-				tichuB ||
-				grandB ||
-				doubleWinB,
-			disabledB: () =>
-				lostTichuB ||
-				lostGrandB ||
-				grandB ||
-				tichuA ||
-				grandA ||
-				doubleWinA,
+			label: $t?.gameControls?.tichuLabel || "Tichu",
+			checkedA: tichuA,
+			checkedB: tichuB,
+			setA: (value: boolean) => (tichuA = value),
+			setB: (value: boolean) => (tichuB = value),
+			// Tichu A disabled: lost own call, has grand, opponent won tichu/grand, opponent has double win
+			disabledA: lostTichuA || lostGrandA || grandA || tichuB || grandB || doubleWinB,
+			disabledB: lostTichuB || lostGrandB || grandB || tichuA || grandA || doubleWinA,
 		},
 		{
 			id: "lostTichu",
-			label: () => $t?.gameControls?.lostTichuLabel || "Lost Tichu",
-			checkedA: () => lostTichuA,
-			checkedB: () => lostTichuB,
-			setA: (value) => (lostTichuA = value),
-			setB: (value) => (lostTichuB = value),
-			disabledA: () => lostGrandA || tichuA || grandA || doubleWinA,
-			disabledB: () => lostGrandB || tichuB || grandB || doubleWinB,
+			label: $t?.gameControls?.lostTichuLabel || "Lost Tichu",
+			checkedA: lostTichuA,
+			checkedB: lostTichuB,
+			setA: (value: boolean) => (lostTichuA = value),
+			setB: (value: boolean) => (lostTichuB = value),
+			// Lost Tichu A disabled: has grand/lost grand, won tichu, own double win (can't lose if you have double win)
+			disabledA: lostGrandA || tichuA || grandA || doubleWinA,
+			disabledB: lostGrandB || tichuB || grandB || doubleWinB,
 		},
 		{
 			id: "grandTichu",
-			label: () => $t?.gameControls?.grandTichuLabel || "Grand Tichu",
-			checkedA: () => grandA,
-			checkedB: () => grandB,
-			setA: (value) => (grandA = value),
-			setB: (value) => (grandB = value),
-			disabledA: () =>
-				lostTichuA ||
-				lostGrandA ||
-				tichuA ||
-				tichuB ||
-				grandB ||
-				doubleWinB,
-			disabledB: () =>
-				lostTichuB ||
-				lostGrandB ||
-				tichuB ||
-				tichuA ||
-				grandA ||
-				doubleWinA,
+			label: $t?.gameControls?.grandTichuLabel || "Grand Tichu",
+			checkedA: grandA,
+			checkedB: grandB,
+			setA: (value: boolean) => (grandA = value),
+			setB: (value: boolean) => (grandB = value),
+			// Grand A disabled: lost own call, has tichu, opponent won tichu/grand, opponent has double win
+			disabledA: lostTichuA || lostGrandA || tichuA || tichuB || grandB || doubleWinB,
+			disabledB: lostTichuB || lostGrandB || tichuB || tichuA || grandA || doubleWinA,
 		},
 		{
 			id: "lostGrandTichu",
-			label: () =>
-				$t?.gameControls?.lostGrandTichuLabel || "Lost Grand Tichu",
-			checkedA: () => lostGrandA,
-			checkedB: () => lostGrandB,
-			setA: (value) => (lostGrandA = value),
-			setB: (value) => (lostGrandB = value),
-			disabledA: () => lostTichuA || tichuA || grandA || doubleWinA,
-			disabledB: () => lostTichuB || tichuB || grandB || doubleWinB,
+			label: $t?.gameControls?.lostGrandTichuLabel || "Lost Grand Tichu",
+			checkedA: lostGrandA,
+			checkedB: lostGrandB,
+			setA: (value: boolean) => (lostGrandA = value),
+			setB: (value: boolean) => (lostGrandB = value),
+			// Lost Grand A disabled: has tichu/lost tichu, won grand, own double win
+			disabledA: lostTichuA || tichuA || grandA || doubleWinA,
+			disabledB: lostTichuB || tichuB || grandB || doubleWinB,
 		},
 		{
 			id: "doubleWin",
-			label: () => $t?.gameControls?.doubleWinLabel || "Double Win",
-			checkedA: () => doubleWinA,
-			checkedB: () => doubleWinB,
-			setA: (value) => (doubleWinA = value),
-			setB: (value) => (doubleWinB = value),
-			disabledA: () =>
-				lostTichuA ||
-				lostGrandA ||
-				tichuB ||
-				grandB ||
-				doubleWinB,
-			disabledB: () =>
-				lostTichuB ||
-				lostGrandB ||
-				tichuA ||
-				grandA ||
-				doubleWinA,
+			label: $t?.gameControls?.doubleWinLabel || "Double Win",
+			checkedA: doubleWinA,
+			checkedB: doubleWinB,
+			setA: (value: boolean) => (doubleWinA = value),
+			setB: (value: boolean) => (doubleWinB = value),
+			// Double Win A disabled: own lost calls (can't lose if double win), opponent won calls, opponent double win
+			// CAN combine with own tichu/grand (player called and won with double win)
+			disabledA: lostTichuA || lostGrandA || tichuB || grandB || doubleWinB,
+			disabledB: lostTichuB || lostGrandB || tichuA || grandA || doubleWinA,
 		},
 	];
 </script>
@@ -333,27 +312,27 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each checkboxRows as row}
+			{#each checkboxRows as row (row.id)}
 				<tr>
-					<td>{row.label()}</td>
+					<td>{row.label}</td>
 					<td class="text-center">
 						<input
 							type="checkbox"
 							class="checkbox checkbox-primary"
-							checked={row.checkedA()}
+							checked={row.checkedA}
 							on:change={(event) =>
 								handleCheckboxChange(event, row.setA)}
-							disabled={row.disabledA()}
+							disabled={row.disabledA}
 						/>
 					</td>
 					<td class="text-center">
 						<input
 							type="checkbox"
 							class="checkbox checkbox-primary"
-							checked={row.checkedB()}
+							checked={row.checkedB}
 							on:change={(event) =>
 								handleCheckboxChange(event, row.setB)}
-							disabled={row.disabledB()}
+							disabled={row.disabledB}
 						/>
 					</td>
 				</tr>
