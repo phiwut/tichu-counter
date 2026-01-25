@@ -204,19 +204,13 @@
 	.delete-button {
 		opacity: 0;
 		transform: translateX(6px);
+		pointer-events: none;
 		transition: opacity 0.2s ease, transform 0.2s ease;
 	}
 
-	.score-row:hover .delete-button,
 	.delete-button--active {
 		opacity: 1;
 		transform: translateX(0);
-	}
-
-	@media (max-width: 640px) {
-		.delete-button {
-			opacity: 1;
-			transform: translateX(0);
-		}
+		pointer-events: auto;
 	}
 </style>
