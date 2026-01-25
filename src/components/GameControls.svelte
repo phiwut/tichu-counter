@@ -28,7 +28,6 @@
 		SCORE_BOUNDS,
 		TICHU_BONUS,
 	} from "../lib/constants";
-	import { toastStore } from "../stores/toastStore";
 
 	const dispatch = createEventDispatcher<{ openSettings: void }>();
 
@@ -46,8 +45,6 @@
 	let doubleWinA = false;
 	let doubleWinB = false;
 	let showResetModal = false;
-	let canUndo = false;
-	let canRedo = false;
 	let isAddButtonDisabled = true;
 
 	// Settings from the store
@@ -58,11 +55,6 @@
 	settingsStore.subscribe((value) => {
 		teamA = value.teamA;
 		teamB = value.teamB;
-	});
-
-	scoreStore.subscribe((value) => {
-		canUndo = value.past.length > 0;
-		canRedo = value.future.length > 0;
 	});
 
 	// Reactive statement to enable/disable the add score button
@@ -159,10 +151,6 @@
 
 		// Reset local state
 		resetInputs();
-		toastStore.addToast(
-			$t?.toast?.scoreAdded || "Score added successfully.",
-			{ type: "success" },
-		);
 	}
 
 	/**
@@ -196,10 +184,6 @@
 	function confirmReset() {
 		scoreStore.resetScores();
 		showResetModal = false;
-		toastStore.addToast(
-			$t?.toast?.gameReset || "Game reset.",
-			{ type: "info" },
-		);
 	}
 
 	/**
@@ -381,40 +365,13 @@
 <!-- Action buttons -->
 <div class="w-full px-5 mb-6 flex items-center">
 	<button
-		class="btn btn-primary mr-2 flex-grow {isAddButtonDisabled
+		class="btn btn-primary flex-grow mr-2 {isAddButtonDisabled
 			? 'btn-outline'
 			: ''}"
 		on:click={addScore}
 		disabled={isAddButtonDisabled}
 	>
 		{$t?.gameControls?.addScore || "Add Score"}
-	</button>
-
-	<button
-		class="btn btn-outline mr-2"
-		on:click={() => {
-			scoreStore.undo();
-			toastStore.addToast(
-				$t?.toast?.undo || "Undid last action.",
-				{ type: "info" },
-			);
-		}}
-		disabled={!canUndo}
-	>
-		{$t?.gameControls?.undo || "Undo"}
-	</button>
-	<button
-		class="btn btn-outline mr-2"
-		on:click={() => {
-			scoreStore.redo();
-			toastStore.addToast(
-				$t?.toast?.redo || "Redid last action.",
-				{ type: "info" },
-			);
-		}}
-		disabled={!canRedo}
-	>
-		{$t?.gameControls?.redo || "Redo"}
 	</button>
 
 	<button
