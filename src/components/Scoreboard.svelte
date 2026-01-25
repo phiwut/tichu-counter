@@ -19,7 +19,6 @@
 	import { t } from "../lib/translations";
 	import { onMount } from "svelte";
 	import ScoreBadge from "./ScoreBadge.svelte";
-	import { toastStore } from "../stores/toastStore";
 
 	let scores: ScoreEntry[] = [];
 	let activeRowIndex: number | null = null;
@@ -38,10 +37,6 @@
 	 */
 	function deleteScore(index: number) {
 		scoreStore.deleteScoreEntry(index);
-		toastStore.addToast(
-			$t?.toast?.scoreDeleted || "Score deleted.",
-			{ type: "warning" },
-		);
 	}
 
 	/**

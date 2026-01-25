@@ -26,7 +26,6 @@
 	import { get } from "svelte/store";
 	import { onMount } from "svelte";
 	import Modal from "./Modal.svelte";
-	import { toastStore } from "../stores/toastStore";
 	import {
 		buildExportPayload,
 		downloadExport,
@@ -115,10 +114,6 @@
 			get(languageStore),
 		);
 		downloadExport(payload);
-		toastStore.addToast(
-			$t?.toast?.dataExported || "Data exported.",
-			{ type: "success" },
-		);
 	}
 
 	async function handleImport(event: Event) {
@@ -151,17 +146,9 @@
 				}));
 			}
 
-			toastStore.addToast(
-				$t?.toast?.dataImported || "Data imported.",
-				{ type: "success" },
-			);
 		} catch (error) {
 			importError =
 				$t?.settings?.importError || "Failed to import data.";
-			toastStore.addToast(
-				$t?.settings?.importError || "Failed to import data.",
-				{ type: "error" },
-			);
 		} finally {
 			if (importInput) {
 				importInput.value = "";
@@ -357,10 +344,6 @@
 					teamB,
 					gameLimit,
 				}));
-				toastStore.addToast(
-					$t?.toast?.settingsSaved || "Settings saved.",
-					{ type: "success" },
-				);
 				onClose();
 			}}>{$t?.settings?.save || "Save"}</button
 		>
