@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { settingsStore } from '../stores/settings-store';
+	import { languageStore } from '../stores/language-store';
 	import { totals } from '../stores/score-store';
 	import { t } from '../lib/translations';
 </script>
@@ -16,5 +17,10 @@
 			<div class="stat-value text-primary">{$totals.totalB}</div>
 			<div class="stat-desc">{$t.header.points}</div>
 		</div>
+	</div>
+	<div class="mt-2 text-center text-xs">
+		<a class="link link-primary" href={`/${$languageStore.language}/guide`}>
+			{$t.header.guideLink}
+		</a>
 	</div>
 </div>

@@ -13,6 +13,7 @@ export interface Translations {
 		title: string;
 		game: string;
 		app: string;
+		data: string;
 		info: string;
 		teamAName: string;
 		teamBName: string;
@@ -21,6 +22,12 @@ export interface Translations {
 		language: string;
 		close: string;
 		save: string;
+		exportTitle: string;
+		exportDescription: string;
+		exportAction: string;
+		importTitle: string;
+		importDescription: string;
+		importError: string;
 	};
 	gameControls: {
 		addScore: string;
@@ -28,6 +35,11 @@ export interface Translations {
 		confirmReset: string;
 		yes: string;
 		no: string;
+		tichu: string;
+		lostTichu: string;
+		grandTichu: string;
+		lostGrandTichu: string;
+		doubleWin: string;
 		delete: string;
 		tichuLabel: string;
 		grandTichuLabel: string;
@@ -44,6 +56,7 @@ export interface Translations {
 	};
 	header: {
 		points: string;
+		guideLink: string;
 	};
 	info: {
 		description: string;
@@ -52,8 +65,29 @@ export interface Translations {
 		title: string;
 		winner: string;
 		draft: string;
+		totalGames: string;
+		totalPoints: string;
+		teamStats: string;
+		specialMoves: string;
+		tichuSuccess: string;
 		newGame: string;
 		close: string;
+		tichuLabel: string;
+		grandTichuLabel: string;
+		doubleWinLabel: string;
+	};
+	reloadPrompt: {
+		offlineReady: string;
+		updateAvailable: string;
+		reload: string;
+		close: string;
+	};
+	offline: {
+		title: string;
+		backOnline: string;
+		reload: string;
+		offline: string;
+		instructions: string;
 	};
 }
 

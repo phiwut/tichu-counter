@@ -11,13 +11,14 @@
   - Handles offline readiness notification
 -->
 
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { registerSW } from 'virtual:pwa-register';
+  import { t } from './translations';
 
   let needRefresh = false;
   let offlineReady = false;
-  let updateServiceWorker;
+  let updateServiceWorker: (reloadPage?: boolean) => void;
 
   onMount(() => {
     console.log('ReloadPrompt: Registering service worker');
@@ -62,15 +63,15 @@
   <div class="pwa-toast" role="alert">
     <div class="message">
       {#if offlineReady}
-        <span>App ready to work offline</span>
+        <span>{$t?.reloadPrompt?.offlineReady || "App ready to work offline"}</span>
       {:else}
-        <span>New content available, click on reload button to update.</span>
+        <span>{$t?.reloadPrompt?.updateAvailable || "New content available, click on reload button to update."}</span>
       {/if}
     </div>
     {#if needRefresh}
-      <button on:click={updateSW}>Reload</button>
+      <button on:click={updateSW}>{$t?.reloadPrompt?.reload || "Reload"}</button>
     {/if}
-    <button on:click={close}>Close</button>
+    <button on:click={close}>{$t?.reloadPrompt?.close || "Close"}</button>
   </div>
 {/if}
 

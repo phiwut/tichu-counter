@@ -3,6 +3,7 @@
  */
 
 import type { Round } from './round';
+import { migrateLegacyRound, type LegacyRound } from './round';
 import { scoreStore } from '../stores/score-store';
 
 export function addRound(round: Round): void {
@@ -19,4 +20,10 @@ export function deleteRoundAt(index: number): void {
 
 export function resetRounds(): void {
 	scoreStore.set({ rounds: [] });
+}
+
+export function replaceRounds(entries: LegacyRound[]): void {
+	scoreStore.set({
+		rounds: entries.map(migrateLegacyRound)
+	});
 }

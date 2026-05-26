@@ -1,7 +1,3 @@
-/**
- * @file German translations for the application.
- */
-
 import type { Translations } from '$lib/translations';
 
 const de: Translations = {
@@ -9,6 +5,7 @@ const de: Translations = {
 		title: 'Einstellungen',
 		game: 'Spiel',
 		app: 'App',
+		data: 'Daten',
 		info: 'Info',
 		teamAName: 'Team A Name',
 		teamBName: 'Team B Name',
@@ -16,7 +13,13 @@ const de: Translations = {
 		appTheme: 'App-Theme',
 		language: 'Sprache',
 		close: 'Schliessen',
-		save: 'Speichern'
+		save: 'Speichern',
+		exportTitle: 'Daten exportieren',
+		exportDescription: 'JSON-Backup der Punkte und Einstellungen herunterladen.',
+		exportAction: 'Exportieren',
+		importTitle: 'Daten importieren',
+		importDescription: 'Punkte und Einstellungen aus einem Export wiederherstellen.',
+		importError: 'Datenimport fehlgeschlagen.'
 	},
 	gameControls: {
 		addScore: 'Punkte hinzufügen',
@@ -24,6 +27,11 @@ const de: Translations = {
 		confirmReset: 'Möchten Sie wirklich alle Punkte zurücksetzen?',
 		yes: 'Ja',
 		no: 'Nein',
+		tichu: 'Tichu',
+		lostTichu: 'Verlorenes Tichu',
+		grandTichu: 'Grosses Tichu',
+		lostGrandTichu: 'Verlorenes Grosses Tichu',
+		doubleWin: 'Doppelsieg',
 		delete: 'Löschen',
 		tichuLabel: 'Tichu',
 		grandTichuLabel: 'Grosses Tichu',
@@ -39,7 +47,8 @@ const de: Translations = {
 		fr: 'Französisch'
 	},
 	header: {
-		points: 'Punkte'
+		points: 'Punkte',
+		guideLink: 'Tichu Leitfaden'
 	},
 	info: {
 		description:
@@ -49,8 +58,29 @@ const de: Translations = {
 		title: 'Spiel beendet',
 		winner: 'Der Gewinner ist {winner}!',
 		draft: 'Das Spiel ist unentschieden!',
+		totalGames: 'Gesamt Spiele',
+		totalPoints: 'Gesamt Punkte',
+		teamStats: 'Team Statistiken',
+		specialMoves: 'Spezialzüge',
+		tichuSuccess: 'Tichu Erfolg',
 		newGame: 'Neues Spiel',
+		close: 'Schliessen',
+		tichuLabel: 'Tichu',
+		grandTichuLabel: 'Grosses Tichu',
+		doubleWinLabel: 'Doppelsiege'
+	},
+	reloadPrompt: {
+		offlineReady: 'App ist offline verfügbar',
+		updateAvailable: 'Neue Inhalte verfügbar. Klicken Sie auf „Neu laden“, um zu aktualisieren.',
+		reload: 'Neu laden',
 		close: 'Schliessen'
+	},
+	offline: {
+		title: 'Tichu Counter',
+		backOnline: 'Sie sind wieder online!',
+		reload: 'Seite neu laden',
+		offline: 'Sie sind derzeit offline.',
+		instructions: 'Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.'
 	}
 };
 

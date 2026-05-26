@@ -32,57 +32,57 @@
 				: '';
 </script>
 
-<Modal show={show} title={$t.gameComplete.title}>
+<Modal show={show} title={$t.gameComplete.title} onClose={dismiss}>
 	<div slot="content" class="space-y-4">
 		<div class="text-center text-2xl font-bold mb-6">{winnerLabel}</div>
 
 		<div class="stats stats-vertical lg:stats-horizontal shadow w-full">
 			<div class="stat">
-				<div class="stat-title">Total Games</div>
+				<div class="stat-title">{$t.gameComplete.totalGames}</div>
 				<div class="stat-value text-primary">{$scoreStore.rounds.length}</div>
 			</div>
 			<div class="stat">
-				<div class="stat-title">Total Points</div>
+				<div class="stat-title">{$t.gameComplete.totalPoints}</div>
 				<div class="stat-value text-primary">{$totals.totalA + $totals.totalB}</div>
 			</div>
 		</div>
 
-		<div class="divider">Team Statistics</div>
+		<div class="divider">{$t.gameComplete.teamStats}</div>
 
 		<div class="stats stats-vertical shadow w-full">
 			<div class="stat">
 				<div class="stat-title">{$settingsStore.teamA}</div>
 				<div class="stat-value text-primary">{$totals.totalA}</div>
 				<div class="stat-desc">
-					Tichu Success: {calculateTichuSuccess($scoreStore.rounds, 'A')}%
+					{$t.gameComplete.tichuSuccess}: {calculateTichuSuccess($scoreStore.rounds, 'A')}%
 				</div>
 			</div>
 			<div class="stat">
 				<div class="stat-title">{$settingsStore.teamB}</div>
 				<div class="stat-value text-primary">{$totals.totalB}</div>
 				<div class="stat-desc">
-					Tichu Success: {calculateTichuSuccess($scoreStore.rounds, 'B')}%
+					{$t.gameComplete.tichuSuccess}: {calculateTichuSuccess($scoreStore.rounds, 'B')}%
 				</div>
 			</div>
 		</div>
 
-		<div class="divider">Special Moves</div>
+		<div class="divider">{$t.gameComplete.specialMoves}</div>
 
 		<div class="grid grid-cols-2 gap-4">
 			<div>
 				<h3 class="font-bold mb-2">{$settingsStore.teamA}</h3>
 				<ul class="space-y-2">
-					<li>Tichu: {countSpecialMoves($scoreStore.rounds, 'A', 'tichu')}</li>
-					<li>Grand Tichu: {countSpecialMoves($scoreStore.rounds, 'A', 'grand')}</li>
-					<li>Double Win: {countSpecialMoves($scoreStore.rounds, 'A', 'doubleWin')}</li>
+					<li>{$t.gameComplete.tichuLabel}: {countSpecialMoves($scoreStore.rounds, 'A', 'tichu')}</li>
+					<li>{$t.gameComplete.grandTichuLabel}: {countSpecialMoves($scoreStore.rounds, 'A', 'grand')}</li>
+					<li>{$t.gameComplete.doubleWinLabel}: {countSpecialMoves($scoreStore.rounds, 'A', 'doubleWin')}</li>
 				</ul>
 			</div>
 			<div>
 				<h3 class="font-bold mb-2">{$settingsStore.teamB}</h3>
 				<ul class="space-y-2">
-					<li>Tichu: {countSpecialMoves($scoreStore.rounds, 'B', 'tichu')}</li>
-					<li>Grand Tichu: {countSpecialMoves($scoreStore.rounds, 'B', 'grand')}</li>
-					<li>Double Win: {countSpecialMoves($scoreStore.rounds, 'B', 'doubleWin')}</li>
+					<li>{$t.gameComplete.tichuLabel}: {countSpecialMoves($scoreStore.rounds, 'B', 'tichu')}</li>
+					<li>{$t.gameComplete.grandTichuLabel}: {countSpecialMoves($scoreStore.rounds, 'B', 'grand')}</li>
+					<li>{$t.gameComplete.doubleWinLabel}: {countSpecialMoves($scoreStore.rounds, 'B', 'doubleWin')}</li>
 				</ul>
 			</div>
 		</div>

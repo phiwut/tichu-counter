@@ -2,6 +2,13 @@
  * @file Pure scoring logic for a Tichu round.
  */
 
+import {
+	BASE_SCORE_TOTAL,
+	DOUBLE_WIN_POINTS,
+	GRAND_TICHU_BONUS,
+	SCORE_BOUNDS,
+	TICHU_BONUS
+} from './constants';
 import { type Round, type TeamFlags, type TeamId } from './round';
 
 export interface RoundInput {
@@ -12,10 +19,10 @@ export interface RoundInput {
 
 function applyFlagModifiers(points: number, flags: TeamFlags): number {
 	let total = points;
-	if (flags.tichu) total += 100;
-	if (flags.grand) total += 200;
-	if (flags.lostTichu) total -= 100;
-	if (flags.lostGrand) total -= 200;
+	if (flags.tichu) total += TICHU_BONUS;
+	if (flags.grand) total += GRAND_TICHU_BONUS;
+	if (flags.lostTichu) total -= TICHU_BONUS;
+	if (flags.lostGrand) total -= GRAND_TICHU_BONUS;
 	return total;
 }
 
@@ -27,10 +34,10 @@ export function computeRoundPoints(input: RoundInput): Round {
 	let baseB = input.baseB;
 
 	if (input.flags.A.doubleWin) {
-		baseA = 200;
+		baseA = DOUBLE_WIN_POINTS;
 		baseB = 0;
 	} else if (input.flags.B.doubleWin) {
-		baseB = 200;
+		baseB = DOUBLE_WIN_POINTS;
 		baseA = 0;
 	}
 
@@ -44,4 +51,12 @@ export function computeRoundPoints(input: RoundInput): Round {
 			B: { ...input.flags.B }
 		}
 	};
+}
+
+export function clampTrickScore(value: number): number {
+	return Math.max(SCORE_BOUNDS.MIN, Math.min(SCORE_BOUNDS.MAX, value));
+}
+
+export function oppositeTrickScore(value: number): number {
+	return BASE_SCORE_TOTAL - value;
 }

@@ -2,6 +2,11 @@
  * @file Manages the application's settings state.
  */
 
+import {
+	DEFAULT_GAME_LIMIT,
+	DEFAULT_TEAM_A,
+	DEFAULT_TEAM_B
+} from '../lib/constants';
 import { persistedStore } from '../lib/persisted-store';
 
 export interface Settings {
@@ -11,9 +16,9 @@ export interface Settings {
 }
 
 const initialSettings: Settings = {
-	teamA: 'TEAM A',
-	teamB: 'TEAM B',
-	gameLimit: 1000
+	teamA: DEFAULT_TEAM_A,
+	teamB: DEFAULT_TEAM_B,
+	gameLimit: DEFAULT_GAME_LIMIT
 };
 
 export const settingsStore = persistedStore<Settings>('settingsStore', initialSettings);

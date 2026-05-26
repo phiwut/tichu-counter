@@ -3,8 +3,12 @@
 	import { get } from 'svelte/store';
 	import { settingsStore } from '../stores/settings-store';
 	import { languageStore, type SupportedLanguage } from '../stores/language-store';
+	import { scoreStore } from '../stores/score-store';
 	import { t } from '../lib/translations';
 	import { DAISYUI_THEMES } from '../lib/themes';
+	import { buildExportPayload, downloadExport, parseImportPayload } from '../lib/dataExport';
+	import { replaceRounds } from '../lib/game-actions';
+	import type { LegacyRound } from '../lib/round';
 	import Modal from './Modal.svelte';
 
 	export let show = false;
@@ -13,9 +17,11 @@
 	let teamA: string;
 	let teamB: string;
 	let gameLimit: number;
-	let activeTab: 'game' | 'app' | 'info' = 'game';
+	let activeTab: 'game' | 'app' | 'data' | 'info' = 'game';
 	let selectedTheme: string;
 	let selectedLanguage: SupportedLanguage;
+	let importError = '';
+	let importInput: HTMLInputElement | null = null;
 
 	onMount(() => {
 		const settings = get(settingsStore);
@@ -37,7 +43,7 @@
 		onClose();
 	}
 
-	function handleTabKey(event: KeyboardEvent, tab: 'game' | 'app' | 'info'): void {
+	function handleTabKey(event: KeyboardEvent, tab: typeof activeTab): void {
 		if (event.key === 'Enter' || event.key === ' ') {
 			activeTab = tab;
 		}
@@ -48,9 +54,44 @@
 		document.documentElement.setAttribute('data-theme', theme);
 		selectedTheme = theme;
 	}
+
+	function handleExport(): void {
+		downloadExport(buildExportPayload(get(scoreStore), get(settingsStore), get(languageStore)));
+	}
+
+	async function handleImport(event: Event): Promise<void> {
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+		if (!file) {
+			return;
+		}
+		importError = '';
+		try {
+			const data = parseImportPayload(await file.text());
+			if (data.scores) {
+				replaceRounds(data.scores as LegacyRound[]);
+			}
+			if (data.settings) {
+				settingsStore.update((store) => ({ ...store, ...data.settings }));
+				teamA = data.settings.teamA ?? teamA;
+				teamB = data.settings.teamB ?? teamB;
+				gameLimit = data.settings.gameLimit ?? gameLimit;
+			}
+			if (data.language) {
+				languageStore.update((store) => ({ ...store, ...data.language }));
+				selectedLanguage = data.language.language as SupportedLanguage;
+			}
+		} catch {
+			importError = $t.settings.importError;
+		} finally {
+			if (importInput) {
+				importInput.value = '';
+			}
+		}
+	}
 </script>
 
-<Modal {show} title={$t.settings.title}>
+<Modal {show} title={$t.settings.title} {onClose}>
 	<div slot="content">
 		<div role="tablist" class="tabs tabs-bordered">
 			<button
@@ -70,6 +111,15 @@
 				on:keydown={(event) => handleTabKey(event, 'app')}
 			>
 				{$t.settings.app}
+			</button>
+			<button
+				role="tab"
+				tabindex="0"
+				class={`tab ${activeTab === 'data' ? 'tab-active' : ''}`}
+				on:click={() => (activeTab = 'data')}
+				on:keydown={(event) => handleTabKey(event, 'data')}
+			>
+				{$t.settings.data}
 			</button>
 			<button
 				role="tab"
@@ -126,6 +176,30 @@
 						<option value="de">{$t.languages.de}</option>
 						<option value="fr">{$t.languages.fr}</option>
 					</select>
+				</div>
+			{:else if activeTab === 'data'}
+				<div class="space-y-4">
+					<div>
+						<h3 class="font-semibold">{$t.settings.exportTitle}</h3>
+						<p class="text-sm opacity-80">{$t.settings.exportDescription}</p>
+						<button class="btn btn-primary mt-2" on:click={handleExport}>
+							{$t.settings.exportAction}
+						</button>
+					</div>
+					<div>
+						<h3 class="font-semibold">{$t.settings.importTitle}</h3>
+						<p class="text-sm opacity-80">{$t.settings.importDescription}</p>
+						<input
+							type="file"
+							accept="application/json"
+							class="file-input file-input-bordered mt-2 w-full"
+							bind:this={importInput}
+							on:change={handleImport}
+						/>
+						{#if importError}
+							<p class="text-error text-sm mt-2">{importError}</p>
+						{/if}
+					</div>
 				</div>
 			{:else if activeTab === 'info'}
 				<div class="prose">

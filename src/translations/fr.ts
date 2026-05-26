@@ -1,7 +1,3 @@
-/**
- * @file French translations for the application.
- */
-
 import type { Translations } from '$lib/translations';
 
 const fr: Translations = {
@@ -9,6 +5,7 @@ const fr: Translations = {
 		title: 'Paramètres',
 		game: 'Jeu',
 		app: 'App',
+		data: 'Données',
 		info: 'Info',
 		teamAName: 'Nom équipe A',
 		teamBName: 'Nom équipe B',
@@ -16,7 +13,13 @@ const fr: Translations = {
 		appTheme: 'Thème',
 		language: 'Langue',
 		close: 'Fermer',
-		save: 'Enregistrer'
+		save: 'Enregistrer',
+		exportTitle: 'Exporter les données',
+		exportDescription: 'Télécharger une sauvegarde JSON des scores et paramètres.',
+		exportAction: 'Exporter',
+		importTitle: 'Importer des données',
+		importDescription: 'Restaurer les scores et paramètres depuis un export.',
+		importError: "Échec de l'importation des données."
 	},
 	gameControls: {
 		addScore: 'Ajouter score',
@@ -24,6 +27,11 @@ const fr: Translations = {
 		confirmReset: 'Voulez-vous vraiment réinitialiser les scores ?',
 		yes: 'Oui',
 		no: 'Non',
+		tichu: 'Tichu',
+		lostTichu: 'Tichu Perdu',
+		grandTichu: 'Grand Tichu',
+		lostGrandTichu: 'Grand Tichu Perdu',
+		doubleWin: 'Double Victoire',
 		delete: 'Supprimer',
 		tichuLabel: 'Tichu',
 		grandTichuLabel: 'Grand Tichu',
@@ -39,7 +47,8 @@ const fr: Translations = {
 		fr: 'Français'
 	},
 	header: {
-		points: 'Points'
+		points: 'Points',
+		guideLink: 'Guide du Tichu'
 	},
 	info: {
 		description:
@@ -49,8 +58,29 @@ const fr: Translations = {
 		title: 'Partie Terminée',
 		winner: 'Le gagnant est {winner}!',
 		draft: 'La partie est nulle!',
-		newGame: 'Nouveau Jeu',
+		totalGames: 'Total des Parties',
+		totalPoints: 'Total des Points',
+		teamStats: "Statistiques d'Équipe",
+		specialMoves: 'Coups Spéciaux',
+		tichuSuccess: 'Réussite Tichu',
+		newGame: 'Nouvelle Partie',
+		close: 'Fermer',
+		tichuLabel: 'Tichu',
+		grandTichuLabel: 'Grand Tichu',
+		doubleWinLabel: 'Doubles Victoires'
+	},
+	reloadPrompt: {
+		offlineReady: "L'application est prête hors ligne",
+		updateAvailable: 'Nouveau contenu disponible, cliquez sur recharger pour mettre à jour.',
+		reload: 'Recharger',
 		close: 'Fermer'
+	},
+	offline: {
+		title: 'Tichu Counter',
+		backOnline: 'Vous êtes de nouveau en ligne !',
+		reload: 'Recharger la page',
+		offline: 'Vous êtes actuellement hors ligne.',
+		instructions: 'Veuillez vérifier votre connexion Internet et réessayer.'
 	}
 };
 

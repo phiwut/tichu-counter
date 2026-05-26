@@ -33,8 +33,10 @@ export function emptyRoundInput(): Record<TeamId, TeamFlags> {
 
 /** @deprecated Legacy persisted shape — migrated on load. */
 export interface LegacyRound {
-	scoreA: number;
-	scoreB: number;
+	scoreA?: number;
+	scoreB?: number;
+	teamA?: number;
+	teamB?: number;
 	tichuA?: boolean;
 	tichuB?: boolean;
 	grandA?: boolean;
@@ -64,7 +66,10 @@ export function migrateLegacyRound(legacy: LegacyRound): Round {
 		doubleWin: !!legacy.doubleWinB
 	};
 	return {
-		points: { A: legacy.scoreA, B: legacy.scoreB },
+		points: {
+			A: legacy.scoreA ?? legacy.teamA ?? 0,
+			B: legacy.scoreB ?? legacy.teamB ?? 0
+		},
 		flags
 	};
 }

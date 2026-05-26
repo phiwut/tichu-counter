@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import "../global.css";
 	import ReloadPrompt from "$lib/ReloadPrompt.svelte";
 </script>
