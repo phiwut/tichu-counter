@@ -1,22 +1,13 @@
 import {
 	DEFAULT_GAME_LIMIT,
 	DEFAULT_TEAM_A,
-	DEFAULT_TEAM_B,
-} from "./constants";
+	DEFAULT_TEAM_B
+} from './constants';
+import type { Round } from './round';
+import type { ScoreState } from '../stores/score-store';
+import type { Settings } from '../stores/settings-store';
 
-const SUPPORTED_LANGUAGES = ["de", "en", "fr"] as const;
-
-type ScoreStateLike = {
-	scores?: unknown[];
-	totalA?: number;
-	totalB?: number;
-};
-
-type SettingsStateLike = {
-	teamA?: string;
-	teamB?: string;
-	gameLimit?: number;
-};
+const SUPPORTED_LANGUAGES = ['de', 'en', 'fr'] as const;
 
 type LanguageStateLike = {
 	language?: string;
@@ -26,9 +17,7 @@ type ExportPayload = {
 	version: number;
 	exportedAt: string;
 	scores: {
-		scores: unknown[];
-		totalA: number;
-		totalB: number;
+		rounds: Round[];
 	};
 	settings: {
 		teamA: string;
@@ -41,58 +30,56 @@ type ExportPayload = {
 };
 
 export function buildExportPayload(
-	scoreState: ScoreStateLike,
-	settingsState: SettingsStateLike,
-	languageState: LanguageStateLike,
+	scoreState: ScoreState,
+	settingsState: Settings,
+	languageState: LanguageStateLike
 ): ExportPayload {
 	const languageValue = languageState?.language;
 	return {
-		version: 1,
+		version: 2,
 		exportedAt: new Date().toISOString(),
 		scores: {
-			scores: scoreState?.scores ?? [],
-			totalA: scoreState?.totalA ?? 0,
-			totalB: scoreState?.totalB ?? 0,
+			rounds: scoreState?.rounds ?? []
 		},
 		settings: {
 			teamA: settingsState?.teamA ?? DEFAULT_TEAM_A,
 			teamB: settingsState?.teamB ?? DEFAULT_TEAM_B,
-			gameLimit: settingsState?.gameLimit ?? DEFAULT_GAME_LIMIT,
+			gameLimit: settingsState?.gameLimit ?? DEFAULT_GAME_LIMIT
 		},
 		language: {
 			language:
-				typeof languageValue === "string" &&
-				SUPPORTED_LANGUAGES.includes(languageValue)
+				typeof languageValue === 'string' &&
+				SUPPORTED_LANGUAGES.includes(languageValue as (typeof SUPPORTED_LANGUAGES)[number])
 					? languageValue
-					: "de",
-		},
+					: 'de'
+		}
 	};
 }
 
 export function downloadExport(payload: ExportPayload) {
 	const blob = new Blob([JSON.stringify(payload, null, 2)], {
-		type: "application/json",
+		type: 'application/json'
 	});
 	const url = URL.createObjectURL(blob);
-	const link = document.createElement("a");
+	const link = document.createElement('a');
 	link.href = url;
-	link.download = "tichu-counter-export.json";
+	link.download = 'tichu-counter-export.json';
 	document.body.appendChild(link);
 	link.click();
 	document.body.removeChild(link);
 	URL.revokeObjectURL(url);
 }
 
-function normalizeSettings(settings: SettingsStateLike | undefined) {
-	if (!settings || typeof settings !== "object") {
+function normalizeSettings(settings: Partial<Settings> | undefined) {
+	if (!settings || typeof settings !== 'object') {
 		return null;
 	}
 	const teamA =
-		typeof settings.teamA === "string" && settings.teamA.trim()
+		typeof settings.teamA === 'string' && settings.teamA.trim()
 			? settings.teamA
 			: DEFAULT_TEAM_A;
 	const teamB =
-		typeof settings.teamB === "string" && settings.teamB.trim()
+		typeof settings.teamB === 'string' && settings.teamB.trim()
 			? settings.teamB
 			: DEFAULT_TEAM_B;
 	const gameLimit =
@@ -103,41 +90,46 @@ function normalizeSettings(settings: SettingsStateLike | undefined) {
 }
 
 function normalizeLanguage(language: LanguageStateLike | undefined) {
-	if (!language || typeof language !== "object") {
+	if (!language || typeof language !== 'object') {
 		return null;
 	}
 	const value = language.language;
-	return typeof value === "string" && SUPPORTED_LANGUAGES.includes(value)
+	return typeof value === 'string' && SUPPORTED_LANGUAGES.includes(value as (typeof SUPPORTED_LANGUAGES)[number])
 		? { language: value }
-		: { language: "de" };
+		: { language: 'de' };
 }
 
 export function parseImportPayload(raw: string) {
 	const parsed = JSON.parse(raw) as {
-		scores?: { scores?: unknown[] } | unknown[];
-		settings?: SettingsStateLike;
+		scores?: { rounds?: unknown[]; scores?: unknown[] } | unknown[];
+		settings?: Partial<Settings>;
 		language?: LanguageStateLike;
 	};
-	if (!parsed || typeof parsed !== "object") {
-		throw new Error("Invalid import payload");
+	if (!parsed || typeof parsed !== 'object') {
+		throw new Error('Invalid import payload');
 	}
 
-	const scoresArray = Array.isArray(parsed.scores?.scores)
-		? parsed.scores.scores
-		: Array.isArray(parsed.scores)
-			? parsed.scores
-			: null;
+	let scoreEntries: unknown[] | null = null;
+	if (parsed.scores && typeof parsed.scores === 'object' && !Array.isArray(parsed.scores)) {
+		if (Array.isArray(parsed.scores.rounds)) {
+			scoreEntries = parsed.scores.rounds;
+		} else if (Array.isArray(parsed.scores.scores)) {
+			scoreEntries = parsed.scores.scores;
+		}
+	} else if (Array.isArray(parsed.scores)) {
+		scoreEntries = parsed.scores;
+	}
 
 	const settings = normalizeSettings(parsed.settings);
 	const language = normalizeLanguage(parsed.language);
 
-	if (!scoresArray && !settings && !language) {
-		throw new Error("No importable data found");
+	if (!scoreEntries && !settings && !language) {
+		throw new Error('No importable data found');
 	}
 
 	return {
-		scores: scoresArray,
+		scores: scoreEntries,
 		settings,
-		language,
+		language
 	};
 }

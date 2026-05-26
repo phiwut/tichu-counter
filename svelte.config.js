@@ -1,7 +1,8 @@
 import adapter from '@sveltejs/adapter-static';
-import preprocess from 'svelte-preprocess';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-export default {
+/** @type {import('@sveltejs/kit').Config} */
+const config = {
   kit: {
     adapter: adapter({
       pages: 'build',
@@ -10,6 +11,9 @@ export default {
       precompress: false,
       strict: true
     }),
+    alias: {
+      $lib: 'src/lib'
+    },
     prerender: {
       handleMissingId: 'ignore',
       handleHttpError: ({ path, referrer, message }) => {
@@ -30,7 +34,7 @@ export default {
       register: false
     }
   },
-  preprocess: preprocess({
-    postcss: true,
-  })
+  preprocess: vitePreprocess()
 };
+
+export default config;

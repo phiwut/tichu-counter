@@ -9,28 +9,27 @@
 		SITE_NAME,
 		SITE_URL
 	} from '$lib/seo';
-	import Header from "../components/Header.svelte";
-	import Scoreboard from "../components/Scoreboard.svelte";
-	import GameControls from "../components/GameControls.svelte";
-	import SettingsModal from "../components/SettingsModal.svelte";
+	import Header from '../components/Header.svelte';
+	import Scoreboard from '../components/Scoreboard.svelte';
+	import GameControls from '../components/GameControls.svelte';
+	import SettingsModal from '../components/SettingsModal.svelte';
+	import GameCompleteModal from '../components/GameCompleteModal.svelte';
 
 	let showSettings = false;
 	let prefersReducedMotion = false;
 
-	function toggleSettings() {
+	function toggleSettings(): void {
 		showSettings = !showSettings;
 	}
 
 	onMount(() => {
-		const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-		const handleChange = (event) => {
+		const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const handleChange = (event: MediaQueryListEvent) => {
 			prefersReducedMotion = event.matches;
 		};
 		prefersReducedMotion = media.matches;
-		media.addEventListener("change", handleChange);
-		return () => {
-			media.removeEventListener("change", handleChange);
-		};
+		media.addEventListener('change', handleChange);
+		return () => media.removeEventListener('change', handleChange);
 	});
 
 	const canonicalUrl = SITE_URL;
@@ -94,14 +93,12 @@
 			<GameControls on:openSettings={toggleSettings} />
 		</div>
 	{:else}
-		<div
-			class="bg-primary-content w-full z-10 sticky bottom-0"
-			transition:slide={{ duration: 300 }}
-		>
+		<div class="bg-primary-content w-full z-10 sticky bottom-0" transition:slide={{ duration: 300 }}>
 			<GameControls on:openSettings={toggleSettings} />
 		</div>
 	{/if}
 	<SettingsModal show={showSettings} onClose={toggleSettings} />
+	<GameCompleteModal />
 </div>
 
 <style>

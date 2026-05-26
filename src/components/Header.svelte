@@ -1,56 +1,26 @@
-<!--
-  @component
-  This component represents the header of the Tichu scoring application.
-  It displays the current scores for both teams and their names.
-  The component subscribes to the settingsStore and scoreStore to keep
-  the displayed information up-to-date.
-
-  Features:
-  - Displays team names (from settingsStore)
-  - Shows current scores for both teams (from scoreStore)
-  - Sticky positioning at the top of the page
--->
-
 <script lang="ts">
-	import { settingsStore } from "../stores/settingsStore";
-	import { scoreStore } from "../stores/scoreStore";
-	import { languageStore } from "../stores/languageStore";
-	import { t } from "../lib/translations";
-
-	// Local state variables
-	let totalA = 0;
-	let totalB = 0;
-	let teamA = "TEAM A";
-	let teamB = "TEAM B";
-
-	// Subscribe to settings and score stores to update local state
-	settingsStore.subscribe((value) => {
-		teamA = value.teamA;
-		teamB = value.teamB;
-	});
-
-	scoreStore.subscribe((value) => {
-		totalA = value.totalA;
-		totalB = value.totalB;
-	});
+	import { settingsStore } from '../stores/settings-store';
+	import { languageStore } from '../stores/language-store';
+	import { totals } from '../stores/score-store';
+	import { t } from '../lib/translations';
 </script>
 
 <div class="sticky top-0 bg-primary-content z-10 p-5">
 	<div class="stats shadow w-full">
 		<div class="stat place-items-center">
-			<div class="stat-title">{teamA}</div>
-			<div class="stat-value text-primary">{totalA}</div>
-			<div class="stat-desc">{$t?.header?.points || "Points"}</div>
+			<div class="stat-title">{$settingsStore.teamA}</div>
+			<div class="stat-value text-primary">{$totals.totalA}</div>
+			<div class="stat-desc">{$t.header.points}</div>
 		</div>
 		<div class="stat place-items-center">
-			<div class="stat-title">{teamB}</div>
-			<div class="stat-value text-primary">{totalB}</div>
-			<div class="stat-desc">{$t?.header?.points || "Points"}</div>
+			<div class="stat-title">{$settingsStore.teamB}</div>
+			<div class="stat-value text-primary">{$totals.totalB}</div>
+			<div class="stat-desc">{$t.header.points}</div>
 		</div>
 	</div>
 	<div class="mt-2 text-center text-xs">
 		<a class="link link-primary" href={`/${$languageStore.language}/guide`}>
-			{$t?.header?.guideLink || "Tichu Guide"}
+			{$t.header.guideLink}
 		</a>
 	</div>
 </div>

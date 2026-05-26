@@ -1,1 +1,2 @@
-export const prerender = true; 
+/** Enables prerendering for static deployment. */
+export const prerender = true;

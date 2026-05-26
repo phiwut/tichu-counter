@@ -1,308 +1,187 @@
-<!--
-  @component
-  This component handles the game controls for a Tichu scoring application.
-  It allows users to input scores, select various game options (Tichu, Grand Tichu, etc.),
-  and manages the overall game state. The component interacts with the scoreStore and
-  settingsStore to maintain and update the game's state.
-
-  Features:
-  - Score input for both teams
-  - Tichu and Grand Tichu options (including lost Tichu/Grand Tichu)
-  - Double Win option
-  - Score validation and automatic opposite score calculation
-  - Game reset functionality with confirmation modal
-  - Settings access
--->
-
 <script lang="ts">
-	import { scoreStore } from "../stores/scoreStore";
-	import { settingsStore } from "../stores/settingsStore";
-	import { createEventDispatcher } from "svelte";
-	import InputField from "./InputField.svelte";
-	import Modal from "./Modal.svelte";
-	import { t } from "../lib/translations";
-	import {
-		BASE_SCORE_TOTAL,
-		DOUBLE_WIN_POINTS,
-		GRAND_TICHU_BONUS,
-		SCORE_BOUNDS,
-		TICHU_BONUS,
-	} from "../lib/constants";
+	import { createEventDispatcher } from 'svelte';
+	import { settingsStore } from '../stores/settings-store';
+	import { emptyRoundInput } from '../stores/score-store';
+	import { t } from '../lib/translations';
+	import { clampTrickScore, computeRoundPoints, oppositeTrickScore, type RoundInput } from '../lib/scoring';
+	import { addRound, resetRounds } from '../lib/game-actions';
+	import InputField from './InputField.svelte';
+	import Modal from './Modal.svelte';
 
 	const dispatch = createEventDispatcher<{ openSettings: void }>();
 
-	// Local state variables
-	let scoreA: string | number = "";
-	let scoreB: string | number = "";
-	let tichuA = false;
-	let tichuB = false;
-	let grandA = false;
-	let grandB = false;
-	let lostTichuA = false;
-	let lostTichuB = false;
-	let lostGrandA = false;
-	let lostGrandB = false;
-	let doubleWinA = false;
-	let doubleWinB = false;
+	let scoreA: string | number = '';
+	let scoreB: string | number = '';
+	let flags = emptyRoundInput();
 	let showResetModal = false;
 	let isAddButtonDisabled = true;
 
-	// Settings from the store
-	let teamA = "TEAM A";
-	let teamB = "TEAM B";
+	$: teamA = $settingsStore.teamA;
+	$: teamB = $settingsStore.teamB;
 
-	// Subscribe to settings store to update local state
-	settingsStore.subscribe((value) => {
-		teamA = value.teamA;
-		teamB = value.teamB;
-	});
-
-	// Reactive statement to enable/disable the add score button
 	$: {
 		const numericScoreA = Number(scoreA);
 		const numericScoreB = Number(scoreB);
 		const hasValidScores =
-			scoreA !== "" &&
-			scoreB !== "" &&
+			scoreA !== '' &&
+			scoreB !== '' &&
 			Number.isFinite(numericScoreA) &&
 			Number.isFinite(numericScoreB) &&
 			numericScoreA % 5 === 0 &&
 			numericScoreB % 5 === 0;
 
-		isAddButtonDisabled = !(hasValidScores || doubleWinA || doubleWinB);
+		isAddButtonDisabled = !(hasValidScores || flags.A.doubleWin || flags.B.doubleWin);
 	}
 
-	// Utility functions
-
-	/**
-	 * Validates and sets the score for a team, updating the opposite team's score accordingly
-	 * @param {Event} event - The input event
-	 * @param {Function} setScore - Function to set the score for the current team
-	 * @param {Function} setOppositeScore - Function to set the score for the opposite team
-	 */
 	function validateAndSetScore(
 		event: Event,
 		setScore: (value: string | number) => void,
-		setOppositeScore: (value: string | number) => void,
-	) {
-		const target = event.target as HTMLInputElement;
-		let value = target.value;
-		if (value === "" || value === "-") {
+		setOppositeScore: (value: string | number) => void
+	): void {
+		const target = event.currentTarget as HTMLInputElement;
+		const value = target.value;
+
+		if (value === '' || value === '-') {
 			setScore(value);
-			setOppositeScore("");
+			setOppositeScore('');
+			return;
+		}
+
+		const intScore = parseInt(value, 10);
+		if (!isNaN(intScore) && intScore % 5 === 0) {
+			const clamped = clampTrickScore(intScore);
+			setScore(clamped);
+			setOppositeScore(oppositeTrickScore(clamped));
 		} else {
-			let intScore = parseInt(value);
-			if (!isNaN(intScore) && intScore % 5 === 0) {
-				intScore = Math.max(
-					SCORE_BOUNDS.MIN,
-					Math.min(SCORE_BOUNDS.MAX, intScore),
-				);
-				setScore(intScore);
-				setOppositeScore(BASE_SCORE_TOTAL - intScore);
-			} else {
-				setScore(value);
-				setOppositeScore("");
-			}
+			setScore(value);
+			setOppositeScore('');
 		}
 	}
 
-	/**
-	 * Adds the current round's score to the scoreStore
-	 */
-	function addScore() {
-		const parsedScoreA = Number(scoreA);
-		const parsedScoreB = Number(scoreB);
-		let newScoreA = Number.isFinite(parsedScoreA) ? parsedScoreA : 0;
-		let newScoreB = Number.isFinite(parsedScoreB) ? parsedScoreB : 0;
+	function resetInputs(): void {
+		scoreA = '';
+		scoreB = '';
+		flags = emptyRoundInput();
+	}
 
-		// Calculate new scores based on Tichu and Grand Tichu status
-		if (doubleWinA) {
-			newScoreA = DOUBLE_WIN_POINTS;
-			newScoreB = 0;
-		}
-		if (doubleWinB) {
-			newScoreB = DOUBLE_WIN_POINTS;
-			newScoreA = 0;
-		}
-
-		if (tichuA) newScoreA += TICHU_BONUS;
-		if (tichuB) newScoreB += TICHU_BONUS;
-		if (grandA) newScoreA += GRAND_TICHU_BONUS;
-		if (grandB) newScoreB += GRAND_TICHU_BONUS;
-		if (lostTichuA) newScoreA -= TICHU_BONUS;
-		if (lostTichuB) newScoreB -= TICHU_BONUS;
-		if (lostGrandA) newScoreA -= GRAND_TICHU_BONUS;
-		if (lostGrandB) newScoreB -= GRAND_TICHU_BONUS;
-
-		scoreStore.addScoreEntry({
-			teamA: newScoreA,
-			teamB: newScoreB,
-			tichuA,
-			tichuB,
-			grandA,
-			grandB,
-			lostTichuA,
-			lostTichuB,
-			lostGrandA,
-			lostGrandB,
-			doubleWinA,
-			doubleWinB,
-		});
-
-		// Reset local state
+	function addScore(): void {
+		const input: RoundInput = {
+			baseA: Number(scoreA) || 0,
+			baseB: Number(scoreB) || 0,
+			flags
+		};
+		addRound(computeRoundPoints(input));
 		resetInputs();
 	}
 
-	/**
-	 * Resets all input fields and checkboxes to their default states
-	 */
-	function resetInputs() {
-		scoreA = "";
-		scoreB = "";
-		tichuA = false;
-		tichuB = false;
-		grandA = false;
-		grandB = false;
-		lostTichuA = false;
-		lostTichuB = false;
-		lostGrandA = false;
-		lostGrandB = false;
-		doubleWinA = false;
-		doubleWinB = false;
-	}
-
-	/**
-	 * Displays the reset confirmation modal
-	 */
-	function handleReset() {
-		showResetModal = true;
-	}
-
-	/**
-	 * Resets the game scores and closes the reset confirmation modal
-	 */
-	function confirmReset() {
-		scoreStore.resetScores();
-		showResetModal = false;
-	}
-
-	/**
-	 * Closes the reset confirmation modal without resetting the game
-	 */
-	function closeResetModal() {
-		showResetModal = false;
-	}
-
-	/**
-	 * Dispatches an event to open the settings modal
-	 */
-	function openSettingsModal() {
-		dispatch("openSettings");
-	}
-
-	function handleCheckboxChange(
-		event: Event,
-		setValue: (value: boolean) => void,
-	) {
+	function handleCheckboxChange(event: Event, setValue: (value: boolean) => void): void {
 		if (event.currentTarget instanceof HTMLInputElement) {
 			setValue(event.currentTarget.checked);
 		}
 	}
 
-	// Reactive checkbox rows - using $: ensures Svelte tracks all dependencies
-	// and updates disabled states when any checkbox is toggled
-	// Rules:
-	// - Tichu/Grand: Can combine with own team's Double Win (player called and won)
-	// - Lost Tichu/Grand: Cannot combine with own team's Double Win (can't lose if you won)
-	// - Lost Tichu/Grand: CAN combine with opponent's Double Win (you lost your call)
-	// - Only one team can win Tichu/Grand per round
-	// - Only one team can have Double Win per round
 	$: checkboxRows = [
 		{
-			id: "tichu",
-			label: $t?.gameControls?.tichuLabel || "Tichu",
-			checkedA: tichuA,
-			checkedB: tichuB,
-			setA: (value: boolean) => (tichuA = value),
-			setB: (value: boolean) => (tichuB = value),
-			// Tichu A disabled: lost own call, has grand, opponent won tichu/grand, opponent has double win
-			disabledA: lostTichuA || lostGrandA || grandA || tichuB || grandB || doubleWinB,
-			disabledB: lostTichuB || lostGrandB || grandB || tichuA || grandA || doubleWinA,
+			id: 'tichu',
+			label: $t.gameControls.tichuLabel,
+			checkedA: flags.A.tichu,
+			checkedB: flags.B.tichu,
+			setA: (value: boolean) => (flags.A.tichu = value),
+			setB: (value: boolean) => (flags.B.tichu = value),
+			disabledA:
+				flags.A.lostTichu ||
+				flags.A.lostGrand ||
+				flags.A.grand ||
+				flags.B.tichu ||
+				flags.B.grand ||
+				flags.B.doubleWin,
+			disabledB:
+				flags.B.lostTichu ||
+				flags.B.lostGrand ||
+				flags.B.grand ||
+				flags.A.tichu ||
+				flags.A.grand ||
+				flags.A.doubleWin
 		},
 		{
-			id: "lostTichu",
-			label: $t?.gameControls?.lostTichuLabel || "Lost Tichu",
-			checkedA: lostTichuA,
-			checkedB: lostTichuB,
-			setA: (value: boolean) => (lostTichuA = value),
-			setB: (value: boolean) => (lostTichuB = value),
-			// Lost Tichu A disabled: has grand/lost grand, won tichu, own double win (can't lose if you have double win)
-			disabledA: lostGrandA || tichuA || grandA || doubleWinA,
-			disabledB: lostGrandB || tichuB || grandB || doubleWinB,
+			id: 'lostTichu',
+			label: $t.gameControls.lostTichuLabel,
+			checkedA: flags.A.lostTichu,
+			checkedB: flags.B.lostTichu,
+			setA: (value: boolean) => (flags.A.lostTichu = value),
+			setB: (value: boolean) => (flags.B.lostTichu = value),
+			disabledA: flags.A.lostGrand || flags.A.tichu || flags.A.grand || flags.A.doubleWin,
+			disabledB: flags.B.lostGrand || flags.B.tichu || flags.B.grand || flags.B.doubleWin
 		},
 		{
-			id: "grandTichu",
-			label: $t?.gameControls?.grandTichuLabel || "Grand Tichu",
-			checkedA: grandA,
-			checkedB: grandB,
-			setA: (value: boolean) => (grandA = value),
-			setB: (value: boolean) => (grandB = value),
-			// Grand A disabled: lost own call, has tichu, opponent won tichu/grand, opponent has double win
-			disabledA: lostTichuA || lostGrandA || tichuA || tichuB || grandB || doubleWinB,
-			disabledB: lostTichuB || lostGrandB || tichuB || tichuA || grandA || doubleWinA,
+			id: 'grandTichu',
+			label: $t.gameControls.grandTichuLabel,
+			checkedA: flags.A.grand,
+			checkedB: flags.B.grand,
+			setA: (value: boolean) => (flags.A.grand = value),
+			setB: (value: boolean) => (flags.B.grand = value),
+			disabledA:
+				flags.A.lostTichu ||
+				flags.A.lostGrand ||
+				flags.A.tichu ||
+				flags.B.tichu ||
+				flags.B.grand ||
+				flags.B.doubleWin,
+			disabledB:
+				flags.B.lostTichu ||
+				flags.B.lostGrand ||
+				flags.B.tichu ||
+				flags.A.tichu ||
+				flags.A.grand ||
+				flags.A.doubleWin
 		},
 		{
-			id: "lostGrandTichu",
-			label: $t?.gameControls?.lostGrandTichuLabel || "Lost Grand Tichu",
-			checkedA: lostGrandA,
-			checkedB: lostGrandB,
-			setA: (value: boolean) => (lostGrandA = value),
-			setB: (value: boolean) => (lostGrandB = value),
-			// Lost Grand A disabled: has tichu/lost tichu, won grand, own double win
-			disabledA: lostTichuA || tichuA || grandA || doubleWinA,
-			disabledB: lostTichuB || tichuB || grandB || doubleWinB,
+			id: 'lostGrandTichu',
+			label: $t.gameControls.lostGrandTichuLabel,
+			checkedA: flags.A.lostGrand,
+			checkedB: flags.B.lostGrand,
+			setA: (value: boolean) => (flags.A.lostGrand = value),
+			setB: (value: boolean) => (flags.B.lostGrand = value),
+			disabledA: flags.A.lostTichu || flags.A.tichu || flags.A.grand || flags.A.doubleWin,
+			disabledB: flags.B.lostTichu || flags.B.tichu || flags.B.grand || flags.B.doubleWin
 		},
 		{
-			id: "doubleWin",
-			label: $t?.gameControls?.doubleWinLabel || "Double Win",
-			checkedA: doubleWinA,
-			checkedB: doubleWinB,
-			setA: (value: boolean) => (doubleWinA = value),
-			setB: (value: boolean) => (doubleWinB = value),
-			// Double Win A disabled: own lost calls (can't lose if double win), opponent won calls, opponent double win
-			// CAN combine with own tichu/grand (player called and won with double win)
-			disabledA: lostTichuA || lostGrandA || tichuB || grandB || doubleWinB,
-			disabledB: lostTichuB || lostGrandB || tichuA || grandA || doubleWinA,
-		},
+			id: 'doubleWin',
+			label: $t.gameControls.doubleWinLabel,
+			checkedA: flags.A.doubleWin,
+			checkedB: flags.B.doubleWin,
+			setA: (value: boolean) => (flags.A.doubleWin = value),
+			setB: (value: boolean) => (flags.B.doubleWin = value),
+			disabledA:
+				flags.A.lostTichu ||
+				flags.A.lostGrand ||
+				flags.B.tichu ||
+				flags.B.grand ||
+				flags.B.doubleWin,
+			disabledB:
+				flags.B.lostTichu ||
+				flags.B.lostGrand ||
+				flags.A.tichu ||
+				flags.A.grand ||
+				flags.A.doubleWin
+		}
 	];
 </script>
 
-<!-- HTML content -->
 <div class="w-full px-5 my-4">
-	<!-- Input fields for scores -->
 	<div class="w-full px-6 space-x-6 flex justify-between mb-4">
 		<InputField
-			value={scoreA}
-			placeholder={$t?.gameControls?.scoreInputHelper || "Enter score"}
-			onInput={(event) =>
-				validateAndSetScore(
-					event,
-					(val) => (scoreA = val),
-					(val) => (scoreB = val),
-				)}
+			bind:value={scoreA}
+			on:input={(e) => validateAndSetScore(e, (val) => (scoreA = val), (val) => (scoreB = val))}
+			label={teamA}
 		/>
 		<InputField
-			value={scoreB}
-			placeholder={$t?.gameControls?.scoreInputHelper || "Enter score"}
-			onInput={(event) =>
-				validateAndSetScore(
-					event,
-					(val) => (scoreB = val),
-					(val) => (scoreA = val),
-				)}
+			bind:value={scoreB}
+			on:input={(e) => validateAndSetScore(e, (val) => (scoreB = val), (val) => (scoreA = val))}
+			label={teamB}
 		/>
 	</div>
-	<!-- Score options table -->
+
 	<table class="table table-sm w-full">
 		<thead>
 			<tr>
@@ -320,8 +199,7 @@
 							type="checkbox"
 							class="checkbox checkbox-primary"
 							checked={row.checkedA}
-							on:change={(event) =>
-								handleCheckboxChange(event, row.setA)}
+							on:change={(event) => handleCheckboxChange(event, row.setA)}
 							disabled={row.disabledA}
 						/>
 					</td>
@@ -330,8 +208,7 @@
 							type="checkbox"
 							class="checkbox checkbox-primary"
 							checked={row.checkedB}
-							on:change={(event) =>
-								handleCheckboxChange(event, row.setB)}
+							on:change={(event) => handleCheckboxChange(event, row.setB)}
 							disabled={row.disabledB}
 						/>
 					</td>
@@ -341,60 +218,32 @@
 	</table>
 </div>
 
-<!-- Action buttons -->
 <div class="w-full px-5 mb-6 flex items-center">
 	<button
-		class="btn btn-primary flex-grow mr-2 {isAddButtonDisabled
-			? 'btn-outline'
-			: ''}"
+		class="btn btn-primary flex-grow mr-2 {isAddButtonDisabled ? 'btn-outline' : ''}"
 		on:click={addScore}
 		disabled={isAddButtonDisabled}
 	>
-		{$t?.gameControls?.addScore || "Add Score"}
+		{$t.gameControls.addScore}
 	</button>
-
 	<button
 		class="btn btn-info mr-2"
-		on:click={openSettingsModal}
-		aria-label={$t?.settings?.title || "Settings"}
+		on:click={() => dispatch('openSettings')}
+		aria-label={$t.settings.title}
 	>
-		<img
-			src="/settings.svg"
-			alt={$t?.settings?.title || "Settings"}
-			width="24"
-			height="24"
-		/>
+		<img src="/settings.svg" alt={$t.settings.title} width="24" height="24" />
 	</button>
-	<button
-		class="btn btn-error"
-		on:click={handleReset}
-		aria-label={$t?.gameControls?.reset || "Reset"}
-	>
-		<img
-			src="/trash.svg"
-			alt={$t?.gameControls?.reset || "Reset"}
-			width="24"
-			height="24"
-		/>
+	<button class="btn btn-error" on:click={() => (showResetModal = true)} aria-label={$t.gameControls.reset}>
+		<img src="/trash.svg" alt={$t.gameControls.reset} width="24" height="24" />
 	</button>
 </div>
 
-<!-- Reset confirmation modal -->
-<Modal
-	show={showResetModal}
-	title={$t?.gameControls?.reset || "Reset"}
-	onClose={closeResetModal}
->
-	<p slot="content">
-		{$t?.gameControls?.confirmReset ||
-			"Are you sure you want to reset the scores?"}
-	</p>
+<Modal show={showResetModal} title={$t.gameControls.reset} onClose={() => (showResetModal = false)}>
+	<p slot="content">{$t.gameControls.confirmReset}</p>
 	<div slot="actions">
-		<button class="btn" on:click={closeResetModal}
-			>{$t?.gameControls?.no || "No"}</button
-		>
-		<button class="btn btn-error" on:click={confirmReset}
-			>{$t?.gameControls?.yes || "Yes"}</button
-		>
+		<button class="btn" on:click={() => (showResetModal = false)}>{$t.gameControls.no}</button>
+		<button class="btn btn-error" on:click={() => { resetRounds(); showResetModal = false; }}>
+			{$t.gameControls.yes}
+		</button>
 	</div>
 </Modal>

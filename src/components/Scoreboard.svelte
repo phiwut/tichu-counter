@@ -1,49 +1,22 @@
-<!--
-  @component
-  This component represents the scoreboard for the Tichu scoring application.
-  It displays a list of all scores for both teams, including special events like Tichu and Grand Tichu.
-  The component allows for score deletion and provides an interactive interface for viewing score details.
-
-  Features:
-  - Displays all scores in a scrollable list
-  - Shows special events (Tichu, Grand Tichu, Double Win) with badges
-  - Allows deletion of individual score entries
-  - Interactive row expansion for more details
-  - Automatically updates total scores when entries are added or deleted
-  - Keyboard accessible for better usability
--->
-
 <script lang="ts">
-	import { scoreStore } from "../stores/scoreStore";
-	import type { ScoreEntry } from "../stores/scoreStore";
-	import { t } from "../lib/translations";
-	import { onMount } from "svelte";
-	import ScoreBadge from "./ScoreBadge.svelte";
+	import { onMount } from 'svelte';
+	import { scoreStore } from '../stores/score-store';
+	import { t } from '../lib/translations';
+	import { deleteRoundAt } from '../lib/game-actions';
+	import type { Round } from '../lib/round';
+	import ScoreBadge from './ScoreBadge.svelte';
 
-	let scores: ScoreEntry[] = [];
 	let activeRowIndex: number | null = null;
 	let touchStartX: number | null = null;
 	let touchRowIndex: number | null = null;
 	let suppressClick = false;
 
-	// Subscribe to score store to update local state
-	scoreStore.subscribe((value) => {
-		scores = value.scores;
-	});
-
-	/**
-	 * Deletes a score entry at the specified index
-	 * @param {number} index - The index of the score to delete
-	 */
-	function deleteScore(index: number) {
-		scoreStore.deleteScoreEntry(index);
+	function deleteScore(index: number): void {
+		deleteRoundAt(index);
+		activeRowIndex = null;
 	}
 
-	/**
-	 * Handles the click event on a score row
-	 * @param {number} index - The index of the clicked row
-	 */
-	function handleRowClick(index: number) {
+	function handleRowClick(index: number): void {
 		if (suppressClick) {
 			suppressClick = false;
 			return;
@@ -51,34 +24,25 @@
 		activeRowIndex = activeRowIndex === index ? null : index;
 	}
 
-	/**
-	 * Handles keyboard events for accessibility
-	 * @param {KeyboardEvent} event - The keyboard event
-	 * @param {number} index - The index of the row
-	 */
-	function handleRowKey(event: KeyboardEvent, index: number) {
-		if (event.key === "Enter" || event.key === " ") {
+	function handleRowKey(event: KeyboardEvent, index: number): void {
+		if (event.key === 'Enter' || event.key === ' ') {
 			handleRowClick(index);
 		}
 	}
 
-	/**
-	 * Handles clicks outside of score rows to close expanded rows
-	 * @param {MouseEvent} event - The click event
-	 */
-	function handleClickOutside(event: MouseEvent) {
+	function handleClickOutside(event: MouseEvent): void {
 		const target = event.target as HTMLElement;
-		if (!target.closest(".score-row")) {
+		if (!target.closest('.score-row')) {
 			activeRowIndex = null;
 		}
 	}
 
-	function handleTouchStart(event: TouchEvent, index: number) {
+	function handleTouchStart(event: TouchEvent, index: number): void {
 		touchStartX = event.touches[0]?.clientX ?? null;
 		touchRowIndex = index;
 	}
 
-	function handleTouchEnd(event: TouchEvent, index: number) {
+	function handleTouchEnd(event: TouchEvent, index: number): void {
 		if (touchStartX === null || touchRowIndex !== index) {
 			return;
 		}
@@ -92,19 +56,22 @@
 		touchRowIndex = null;
 	}
 
-	// Register and unregister event listener for click outside
-	onMount(() => {
-		document.addEventListener("click", handleClickOutside);
-		return () => {
-			document.removeEventListener("click", handleClickOutside);
-		};
-	});
+	function teamBadges(round: Round, team: 'A' | 'B') {
+		const flags = round.flags[team];
+		return { flags, points: round.points[team] };
+	}
 
+	onMount(() => {
+		document.addEventListener('click', handleClickOutside);
+		return () => document.removeEventListener('click', handleClickOutside);
+	});
 </script>
 
 <div class="w-full px-5 my-4 overflow-y-auto flex-grow z-0">
 	<div class="flex flex-col space-y-2">
-		{#each scores as score, index}
+		{#each $scoreStore.rounds as round, index}
+			{@const teamA = teamBadges(round, 'A')}
+			{@const teamB = teamBadges(round, 'B')}
 			<div
 				class="score-row flex items-center justify-between p-4 bg-primary rounded-lg relative text-primary-content"
 				role="button"
@@ -115,81 +82,51 @@
 				on:touchend={(event) => handleTouchEnd(event, index)}
 			>
 				<div class="w-1/2 text-center font-medium">
-					{score.teamA}
-					<ScoreBadge
-						type="success"
-						show={score.tichuA}
-						label={$t?.gameControls?.tichu || "tichu"}
-						icon="T"
-					/>
-					<ScoreBadge
-						type="success"
-						show={score.grandA}
-						label={$t?.gameControls?.grandTichu || "TICHU"}
-						icon="GT"
-					/>
+					{teamA.points}
+					<ScoreBadge type="success" show={teamA.flags.tichu} label={$t.gameControls.tichu} icon="T" />
+					<ScoreBadge type="success" show={teamA.flags.grand} label={$t.gameControls.grandTichu} icon="GT" />
+					<ScoreBadge type="error" show={teamA.flags.lostTichu} label={$t.gameControls.lostTichu} icon="LT" />
 					<ScoreBadge
 						type="error"
-						show={score.lostTichuA}
-						label={$t?.gameControls?.lostTichu || "tichu"}
-						icon="LT"
-					/>
-					<ScoreBadge
-						type="error"
-						show={score.lostGrandA}
-						label={$t?.gameControls?.lostGrandTichu || "TICHU"}
+						show={teamA.flags.lostGrand}
+						label={$t.gameControls.lostGrandTichu}
 						icon="LGT"
 					/>
 					<ScoreBadge
 						type="warning"
-						show={score.doubleWinA}
-						label={$t?.gameControls?.doubleWin || "double-win"}
+						show={teamA.flags.doubleWin}
+						label={$t.gameControls.doubleWin}
 						icon="DW"
 					/>
 				</div>
 				<div class="w-1/2 text-center font-medium">
-					{score.teamB}
-					<ScoreBadge
-						type="success"
-						show={score.tichuB}
-						label={$t?.gameControls?.tichu || "tichu"}
-						icon="T"
-					/>
-					<ScoreBadge
-						type="success"
-						show={score.grandB}
-						label={$t?.gameControls?.grandTichu || "TICHU"}
-						icon="GT"
-					/>
+					{teamB.points}
+					<ScoreBadge type="success" show={teamB.flags.tichu} label={$t.gameControls.tichu} icon="T" />
+					<ScoreBadge type="success" show={teamB.flags.grand} label={$t.gameControls.grandTichu} icon="GT" />
+					<ScoreBadge type="error" show={teamB.flags.lostTichu} label={$t.gameControls.lostTichu} icon="LT" />
 					<ScoreBadge
 						type="error"
-						show={score.lostTichuB}
-						label={$t?.gameControls?.lostTichu || "tichu"}
-						icon="LT"
-					/>
-					<ScoreBadge
-						type="error"
-						show={score.lostGrandB}
-						label={$t?.gameControls?.lostGrandTichu || "TICHU"}
+						show={teamB.flags.lostGrand}
+						label={$t.gameControls.lostGrandTichu}
 						icon="LGT"
 					/>
 					<ScoreBadge
 						type="warning"
-						show={score.doubleWinB}
-						label={$t?.gameControls?.doubleWin || "double win"}
+						show={teamB.flags.doubleWin}
+						label={$t.gameControls.doubleWin}
 						icon="DW"
 					/>
 				</div>
 				<button
 					class={`delete-button absolute right-4 btn btn-error btn-sm text-error-content ${
-						activeRowIndex === index ? "delete-button--active" : ""
+						activeRowIndex === index ? 'delete-button--active' : ''
 					}`}
 					on:click|stopPropagation={() => deleteScore(index)}
-					aria-label={$t?.gameControls?.delete || "Delete"}
+					aria-label={$t.gameControls.delete}
 					aria-hidden={activeRowIndex !== index}
 					tabindex={activeRowIndex === index ? 0 : -1}
 				>
-					{$t?.gameControls?.delete || "Delete"}
+					{$t.gameControls.delete}
 				</button>
 			</div>
 		{/each}

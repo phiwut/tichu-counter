@@ -1,25 +1,5 @@
-<!--
-  @component
-  This component represents a reusable modal dialog for the Tichu scoring application.
-  It provides a flexible structure for displaying various types of modal content.
-
-  Props:
-  - show: A boolean to control the visibility of the modal
-  - title: The title text to be displayed at the top of the modal
-
-  Slots:
-  - content: The main content of the modal
-  - actions: The action buttons or links at the bottom of the modal
-
-  Features:
-  - Conditional rendering based on the 'show' prop
-  - Customizable title
-  - Flexible content and action areas using named slots
-  - Styling using Tailwind CSS classes
--->
-
 <script lang="ts">
-	import { tick } from "svelte";
+	import { tick } from 'svelte';
 
 	export let show = false;
 	export let title: string;
@@ -35,8 +15,8 @@
 		}
 		return Array.from(
 			dialog.querySelectorAll(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-			),
+				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			)
 		);
 	}
 
@@ -55,17 +35,17 @@
 	}
 
 	function restoreFocus() {
-		if (previousActive && typeof previousActive.focus === "function") {
+		if (previousActive && typeof previousActive.focus === 'function') {
 			previousActive.focus();
 		}
 		previousActive = null;
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (closeOnEsc && event.key === "Escape") {
+		if (closeOnEsc && event.key === 'Escape') {
 			onClose();
 		}
-		if (event.key !== "Tab") {
+		if (event.key !== 'Tab') {
 			return;
 		}
 		const focusable = getFocusableElements();
@@ -91,13 +71,7 @@
 </script>
 
 {#if show}
-	<dialog
-		class="modal"
-		open
-		bind:this={dialog}
-		tabindex="-1"
-		on:keydown={handleKeydown}
-	>
+	<dialog class="modal" open bind:this={dialog} tabindex="-1" on:keydown={handleKeydown}>
 		<div class="modal-box">
 			<h2 class="font-bold text-xl">{title}</h2>
 			<slot name="content"></slot>
