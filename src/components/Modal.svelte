@@ -18,9 +18,16 @@
   - Styling using Tailwind CSS classes
 -->
 
-<script>
-	export let show = false;
-	export let title;
+<script lang="ts">
+	/**
+	 * @prop {boolean} show - Controls the visibility of the modal.
+	 */
+	export let show: boolean = false;
+
+	/**
+	 * @prop {string} title - The title text for the modal.
+	 */
+	export let title: string;
 </script>
 
 {#if show}

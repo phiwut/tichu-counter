@@ -15,25 +15,30 @@
   - Custom input handler
 -->
 
-<script>
-	export let value;
-	export let placeholder;
-	export let onInput;
+<script lang="ts">
+	/**
+	 * @prop {string} value - The current value of the input field.
+	 */
+	export let value: string = '';
 
 	/**
-	 * Handles the input event and calls the provided onInput function
-	 * @param {Event} event - The input event
+	 * @prop {string} label - The label text for the input field.
 	 */
-	function handleInput(event) {
-		onInput(event);
-	}
+	export let label: string = '';
+
+	const id = `input-${Math.random().toString(36).substring(2, 9)}`;
 </script>
 
-<input
-	type="number"
-	pattern="[0-9]*"
-	{placeholder}
-	class="input input-bordered input-primary w-1/2 text-center"
-	bind:value
-	on:input={handleInput}
-/>
+<div class="form-control w-1/2">
+	<label class="label" for={id}>
+		<span class="label-text">{label}</span>
+	</label>
+	<input
+		{id}
+		type="number"
+		pattern="[0-9]*"
+		class="input input-bordered input-primary w-full text-center"
+		bind:value
+		on:input
+	/>
+</div>

@@ -1,14 +1,14 @@
-<script>
-	import { onMount } from 'svelte';
+<script lang="ts">
 	import { fade, slide } from 'svelte/transition';
-	import Header from "../components/Header.svelte";
-	import Scoreboard from "../components/Scoreboard.svelte";
-	import GameControls from "../components/GameControls.svelte";
-	import SettingsModal from "../components/SettingsModal.svelte";
+	import Header from '../components/Header.svelte';
+	import Scoreboard from '../components/Scoreboard.svelte';
+	import GameControls from '../components/GameControls.svelte';
+	import SettingsModal from '../components/SettingsModal.svelte';
+	import GameCompleteModal from '../components/GameCompleteModal.svelte';
 
 	let showSettings = false;
 
-	function toggleSettings() {
+	function toggleSettings(): void {
 		showSettings = !showSettings;
 	}
 </script>
@@ -22,10 +22,11 @@
 			<Scoreboard />
 		</div>
 	</div>
-	<div class="bg-primary-content w-full z-10 sticky bottom-0" transition:slide={{duration: 300}}>
-		<GameControls on:openSettings={toggleSettings} />
+	<div class="bg-primary-content w-full z-10 sticky bottom-0" transition:slide={{ duration: 300 }}>
+		<GameControls on:open-settings={toggleSettings} />
 	</div>
 	<SettingsModal show={showSettings} onClose={toggleSettings} />
+	<GameCompleteModal />
 </div>
 
 <style>
