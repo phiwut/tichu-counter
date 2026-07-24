@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { settingsStore } from '../stores/settings-store';
 	import { languageStore } from '../stores/language-store';
 	import { totals } from '../stores/score-store';
@@ -19,7 +20,7 @@
 		</div>
 	</div>
 	<div class="mt-2 text-center text-xs">
-		<a class="link link-primary" href={`/${$languageStore.language}/guide`}>
+		<a class="link link-primary" href={`${base}/${$languageStore.language}/guide`}>
 			{$t.header.guideLink}
 		</a>
 	</div>

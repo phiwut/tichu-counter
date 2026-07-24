@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { createEventDispatcher } from 'svelte';
 	import { settingsStore } from '../stores/settings-store';
 	import { emptyRoundInput } from '../stores/score-store';
@@ -231,10 +232,10 @@
 		on:click={() => dispatch('openSettings')}
 		aria-label={$t.settings.title}
 	>
-		<img src="/settings.svg" alt={$t.settings.title} width="24" height="24" />
+		<img src={`${base}/settings.svg`} alt={$t.settings.title} width="24" height="24" />
 	</button>
 	<button class="btn btn-error" on:click={() => (showResetModal = true)} aria-label={$t.gameControls.reset}>
-		<img src="/trash.svg" alt={$t.gameControls.reset} width="24" height="24" />
+		<img src={`${base}/trash.svg`} alt={$t.gameControls.reset} width="24" height="24" />
 	</button>
 </div>
 

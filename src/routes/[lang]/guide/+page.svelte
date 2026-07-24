@@ -1,4 +1,5 @@
 <script>
+  import { base } from '$app/paths';
   import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, SITE_NAME, SITE_URL } from '$lib/seo';
   import { guideLanguages } from '$lib/guideData.js';
 
@@ -62,7 +63,7 @@
   <div class="max-w-5xl mx-auto px-6 py-10">
     <div class="text-sm breadcrumbs mb-6">
       <ul>
-        <li><a href="/">Tichu Counter</a></li>
+        <li><a href={`${base}/`}>Tichu Counter</a></li>
         <li>{copy.allGuides}</li>
       </ul>
     </div>
@@ -76,7 +77,7 @@
       {#each pages as page}
         <a
           class="card bg-base-200 shadow hover:shadow-md transition"
-          href={`/${lang}/guide/${page.slug}`}
+          href={`${base}/${lang}/guide/${page.slug}`}
         >
           <div class="card-body">
             <h2 class="card-title text-lg">{page.title}</h2>
@@ -89,7 +90,7 @@
     <section class="mt-10 bg-base-200 rounded-lg p-6">
       <h2 class="text-xl font-semibold">{copy.cta}</h2>
       <p class="text-sm text-base-content/70 mt-1">{copy.ctaNote}</p>
-      <a class="btn btn-primary mt-4" href="/">Tichu Counter</a>
+      <a class="btn btn-primary mt-4" href={`${base}/`}>Tichu Counter</a>
     </section>
   </div>
 </main>

@@ -14,6 +14,9 @@ const config = {
     alias: {
       $lib: 'src/lib'
     },
+    paths: {
+      base: process.env.BASE_PATH ?? ''
+    },
     prerender: {
       handleMissingId: 'ignore',
       handleHttpError: ({ path, referrer, message }) => {

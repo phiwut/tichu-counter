@@ -1,4 +1,5 @@
 <script>
+  import { base } from '$app/paths';
   import { DEFAULT_OG_IMAGE, DEFAULT_OG_IMAGE_ALT, SITE_NAME, SITE_URL } from '$lib/seo';
   export let data;
 
@@ -71,8 +72,8 @@
   <div class="max-w-3xl mx-auto px-6 py-10">
     <div class="text-sm breadcrumbs mb-6">
       <ul>
-        <li><a href="/">Tichu Counter</a></li>
-        <li><a href={`/${lang}/guide`}>{copy.allGuides}</a></li>
+        <li><a href={`${base}/`}>Tichu Counter</a></li>
+        <li><a href={`${base}/${lang}/guide`}>{copy.allGuides}</a></li>
         <li>{page.h1}</li>
       </ul>
     </div>
@@ -94,7 +95,7 @@
     <section class="mt-10 bg-base-200 rounded-lg p-6">
       <h2 class="text-xl font-semibold">{copy.ctaTitle}</h2>
       <p class="text-sm text-base-content/70 mt-2">{copy.ctaBody}</p>
-      <a class="btn btn-primary mt-4" href="/">Tichu Counter</a>
+      <a class="btn btn-primary mt-4" href={`${base}/`}>Tichu Counter</a>
     </section>
 
     {#if related.length}
@@ -104,7 +105,7 @@
           {#each related as rel}
             <a
               class="card bg-base-200 shadow hover:shadow-md transition"
-              href={`/${lang}/guide/${rel.slug}`}
+              href={`${base}/${lang}/guide/${rel.slug}`}
             >
               <div class="card-body">
                 <h3 class="card-title text-base">{rel.title}</h3>
@@ -121,7 +122,7 @@
         <h2 class="text-lg font-semibold">{copy.languages}</h2>
         <div class="mt-3 flex flex-wrap gap-2">
           {#each otherLanguages as item}
-            <a class="btn btn-outline btn-sm" href={`/${item.code}/guide/${slug}`}>
+            <a class="btn btn-outline btn-sm" href={`${base}/${item.code}/guide/${slug}`}>
               {labels[item.code] || item.code}
             </a>
           {/each}

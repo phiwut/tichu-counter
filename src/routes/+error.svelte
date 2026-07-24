@@ -1,4 +1,5 @@
 <script>
+	import { base } from "$app/paths";
 	import { page } from "$app/stores";
 	import { SITE_NAME } from "$lib/seo";
 </script>
@@ -28,5 +29,5 @@
 		{/if}
 	</p>
 
-	<a href="/" class="btn btn-primary">Return to Home</a>
+	<a href={`${base}/`} class="btn btn-primary">Return to Home</a>
 </div>
