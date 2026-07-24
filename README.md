@@ -36,3 +36,9 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Production
+
+Pushes to `main` are built, deployed to GitHub Pages, and smoke-tested
+automatically. See [docs/production.md](docs/production.md) for the `tichu.xyz`
+DNS and Pages setup.

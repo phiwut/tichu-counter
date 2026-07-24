@@ -1,0 +1,19 @@
+name: Production smoke test
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check tichu.xyz
+        run: node scripts/smoke-site.mjs https://tichu.xyz

@@ -6,7 +6,8 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run && node --test test/*.test.mjs",
+    "smoke:live": "node scripts/smoke-site.mjs"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.2.1",
